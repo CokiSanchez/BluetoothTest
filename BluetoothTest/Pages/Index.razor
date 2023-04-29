@@ -1,3 +1,38 @@
 ﻿@page "/"
 
+@if (!Available)
+{
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary m-2" @onclick="BuscarDispositivos">Buscar</button>
 
+            @if (Device is not null)
+            {
+                if (Connected)
+                {
+                    <button class="btn btn-primary m-2" @onclick="()=>ConectarDispositivo(true)">Conectar</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary m-2" @onclick="()=>ConectarDispositivo(false)">Desconectar</button>
+                }
+            }
+
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <p class="text-danger">
+                El servicio bluetooth no está disponible para este dispositivo.
+            </p>
+        </div>
+    </div>
+}
+<div class="row @(string.IsNullOrEmpty(Error) ? "d-none" : "")">
+    <div class="col text-danger">
+        @Error
+    </div>
+</div>
