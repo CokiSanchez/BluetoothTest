@@ -22,9 +22,9 @@
     </div>
     <div class="row @(Device is null ? "d-none" : "")">
         <div class="col">
-            <label>Name: @Device.Name</label>
-            <label>Id: @Device.Id</label>
-            <label>Connected: @Device.Gatt.Connected</label>
+            <label>Name: @Device?.Name</label>
+            <label>Id: @Device?.Id</label>
+            <label>Connected: @Device?.Gatt.Connected</label>
         </div>
     </div>
 }
