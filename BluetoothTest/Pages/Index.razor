@@ -24,10 +24,10 @@
     </div>
     <div class="row @(Device is null ? "d-none" : "")">
         <div class="col">
-            <label>Nombre: @Device!.Name</label>
-            <label>ID: @Device!.Id</label>
-            <label>UUID: @Device!.Gatt.DeviceUuid</label>
-            <label>Estado: @(Device!.Gatt.Connected ? "Conectado" : "Desconectado")</label>
+            <label>Nombre: @Device?.Name</label>
+            <label>ID: @Device?.Id</label>
+            <label>UUID: @Device?.Gatt.DeviceUuid</label>
+            <label>Estado: @((Device?.Gatt.Connected ?? false) ? "Conectado" : "Desconectado")</label>
         </div>
            <div class="col">
             <button class="btn btn-primary m-2" @onclick="ComenzarServicios">Comenzar servicios</button>
