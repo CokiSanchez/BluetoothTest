@@ -3,7 +3,7 @@
 @if (Available)
 {
     <div class="row">
-        <div class="col">
+        <div class="col-12">
             <button class="btn btn-primary m-2" @onclick="BuscarDispositivos">Buscar</button>
         </div>
         <div class="col">
@@ -12,11 +12,11 @@
             {
                 if (!Device.Gatt.Connected)
                 {
-                    <button class="btn btn-primary m-2" @onclick="()=>ConectarDispositivo(true)">Conectar</button>
+                    <button class="btn btn-success m-2" @onclick="()=>ConectarDispositivo(true)">Conectar</button>
                 }
                 else
                 {
-                    <button class="btn btn-primary m-2" @onclick="()=>ConectarDispositivo(false)">Desconectar</button>
+                    <button class="btn btn-danger m-2" @onclick="()=>ConectarDispositivo(false)">Desconectar</button>
                 }
             }
 
@@ -24,9 +24,14 @@
     </div>
     <div class="row @(Device is null ? "d-none" : "")">
         <div class="col">
-            <label>Name: @Device?.Name</label>
-            <label>Id: @Device?.Id</label>
-            <label>Connected: @Device?.Gatt.Connected</label>
+            <label>Nombre: @Device!.Name</label>
+            <label>ID: @Device!.Id</label>
+            <label>UUID: @Device!.Gatt.DeviceUuid</label>
+            <label>Estado: @(Device!.Gatt.Connected ? "Conectado" : "Desconectado")</label>
+        </div>
+           <div class="col">
+            <button class="btn btn-primary m-2" @onclick="ComenzarServicios">Comenzar servicios</button>
+            <button class="btn btn-primary m-2" @onclick="DetenerServicios">Detener servicios</button>
         </div>
     </div>
 }
@@ -51,7 +56,7 @@ else
         <ul>
             @foreach (var log in Logs)
             {
-                <li>log</li>
+                <li>@log</li>
             }
         </ul>
     </div>

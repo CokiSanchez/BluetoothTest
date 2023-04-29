@@ -64,9 +64,49 @@ public partial class Index
         }
         else
         {
+            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+
+            await characteristic.StopNotifications();
+
             await Device.Gatt.Disonnect();
             Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
             Device = null;
+            Logs.Clear();
+        }
+    }
+
+    private async Task ComenzarServicios()
+    {
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
+
+        var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+        var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+        if (characteristic.Properties.Write)
+        {
+            characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+
+            };
+            await characteristic.StartNotifications();
+            //await characteristic.WriteValueWithResponse(/* Your byte array */);
+        }
+    }
+
+    private async Task DetenerServicios()
+    {
+        Logs.Add($"{DateTime.Now:HH:mm} - Deteniendo servicios para {Device.Gatt.DeviceUuid}.");
+
+        var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+        var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+        if (characteristic.Properties.Write)
+        {
+            characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            {
+
+            };
+            await characteristic.StopNotifications();
         }
     }
 }
