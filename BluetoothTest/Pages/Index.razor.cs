@@ -9,8 +9,8 @@ public partial class Index
     private IBluetoothNavigator BluetoothNavigator { get; set; } = null!;
     private IDevice? Device { get; set; }
 
-    private bool Connected { get; set; } = false;
     private bool Available { get; set; } = false;
+    private List<string> Logs { get; set; } = new();
     private string Error { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -57,17 +57,16 @@ public partial class Index
         if (Device == null)
             return;
 
-        Connected = connect;
-
         if (connect)
         {
             await Device.Gatt.Connect();
+            Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
         }
         else
         {
             await Device.Gatt.Disonnect();
+            Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
             Device = null;
         }
     }
-
 }
