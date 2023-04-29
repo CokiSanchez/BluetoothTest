@@ -20,12 +20,19 @@
 
         </div>
     </div>
+    <div class="row @(Device is null ? "d-none" : "")">
+        <div class="col">
+            <label>Name: @Device.Name</label>
+            <label>Id: @Device.Id</label>
+            <label>Connected: @Device.Gatt.Connected</label>
+        </div>
+    </div>
 }
 else
 {
     <div class="row">
         <div class="col">
-            <p class="text-danger">
+            <p class="text-danger fw-bold">
                 El servicio bluetooth no está disponible para este dispositivo.
             </p>
         </div>
@@ -34,5 +41,6 @@ else
 <div class="row @(string.IsNullOrEmpty(Error) ? "d-none" : "")">
     <div class="col text-danger">
         @Error
+        <button type="button" class="btn-close" @onclick="()=> Error = string.Empty"></button>
     </div>
 </div>
