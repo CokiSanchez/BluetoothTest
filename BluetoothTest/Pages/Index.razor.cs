@@ -30,9 +30,9 @@ public partial class Index
         {
             Available = await BluetoothNavigator.GetAvailability();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            throw;
+            Error = e.Message;
         }
     }
 
@@ -57,22 +57,29 @@ public partial class Index
         if (Device == null)
             return;
 
-        if (connect)
+        try
         {
-            await Device.Gatt.Connect();
-            Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
+            if (connect)
+            {
+                await Device.Gatt.Connect();
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
+            }
+            else
+            {
+                var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+                var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+
+                await characteristic.StopNotifications();
+
+                await Device.Gatt.Disonnect();
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
+                Device = null;
+                Logs.Clear();
+            }
         }
-        else
+        catch (Exception e)
         {
-            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-
-            await characteristic.StopNotifications();
-
-            await Device.Gatt.Disonnect();
-            Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
-            Device = null;
-            Logs.Clear();
+            Error = e.Message;
         }
     }
 
@@ -80,17 +87,24 @@ public partial class Index
     {
         Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
 
-        var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-        var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-        if (characteristic.Properties.Write)
+        try
         {
-            characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+            if (characteristic.Properties.Write)
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+                characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+                {
+                    Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
 
-            };
-            await characteristic.StartNotifications();
-            //await characteristic.WriteValueWithResponse(/* Your byte array */);
+                };
+                await characteristic.StartNotifications();
+                //await characteristic.WriteValueWithResponse(/* Your byte array */);
+            }
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
         }
     }
 
@@ -98,15 +112,23 @@ public partial class Index
     {
         Logs.Add($"{DateTime.Now:HH:mm} - Deteniendo servicios para {Device.Gatt.DeviceUuid}.");
 
-        var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-        var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-        if (characteristic.Properties.Write)
+        try
         {
-            characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+            if (characteristic.Properties.Write)
             {
+                characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+                {
 
-            };
-            await characteristic.StopNotifications();
+                };
+                await characteristic.StopNotifications();
+            }
+        }
+        catch (Exception e)
+        {
+
+            Error = e.Message;
         }
     }
 }
