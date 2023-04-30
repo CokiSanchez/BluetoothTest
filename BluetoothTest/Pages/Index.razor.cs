@@ -85,11 +85,14 @@ public partial class Index
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Gatt.DeviceUuid}.");
+
+        if (Device is null)        
+            return;        
 
         try
         {
-            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            var service = await Device!.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
             var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
             if (characteristic.Properties.Write)
             {
