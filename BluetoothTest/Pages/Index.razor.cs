@@ -92,18 +92,26 @@ public partial class Index
 
         try
         {
-            var service = await Device!.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-            if (characteristic.Properties.Write)
-            {
-                characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-                {
-                    Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+            var service = await Device.Gatt.GetPrimaryService(Device.Id);
 
-                };
-                await characteristic.StartNotifications();
-                //await characteristic.WriteValueWithResponse(/* Your byte array */);
-            }
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
+
+            var characteristic = await service.GetCharacteristic(service.Uuid);
+
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic.Value} {characteristic.Uuid}.");
+           
+            //var service = await Device!.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+            //if (characteristic.Properties.Write)
+            //{
+            //    characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            //    {
+            //        Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+
+            //    };
+            //    await characteristic.StartNotifications();
+            //    //await characteristic.WriteValueWithResponse(/* Your byte array */);
+            //}
         }
         catch (Exception e)
         {
@@ -117,16 +125,25 @@ public partial class Index
 
         try
         {
-            var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-            var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-            if (characteristic.Properties.Write)
-            {
-                characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-                {
+            var service2 = await Device.Gatt.GetPrimaryService("0000180A-0000-1000-8000-00805F9B34FB");
 
-                };
-                await characteristic.StopNotifications();
-            }
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
+
+            var characteristic2 = await service2.GetCharacteristic(service2.Uuid);
+
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic2.Value} {characteristic2.Uuid}.");
+
+
+            //var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+            //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+            //if (characteristic.Properties.Write)
+            //{
+            //    characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            //    {
+
+            //    };
+            //    await characteristic.StopNotifications();
+            //}
         }
         catch (Exception e)
         {

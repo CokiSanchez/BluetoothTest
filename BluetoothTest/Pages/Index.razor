@@ -26,7 +26,6 @@
         <div class="col">
             <label>Nombre: @Device?.Name</label>
             <label>ID: @Device?.Id</label>
-            <label>UUID: @Device?.Gatt.DeviceUuid</label>
             <label>Estado: @((Device?.Gatt.Connected ?? false) ? "Conectado" : "Desconectado")</label>
         </div>
            <div class="col">
