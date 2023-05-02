@@ -41,10 +41,24 @@ public partial class Index
         try
         {
             Device = await BluetoothNavigator.RequestDevice(
-            new RequestDeviceQuery
-            {
-                AcceptAllDevices = true
-            });
+           new RequestDeviceQuery
+           {
+               Filters = new List<Filter>
+               {
+                   new Filter
+                   {
+                       Name= "printer",
+                       NamePrefix = "prnt",
+                       Services = new List<object>{"0000180a-0000-1000-8000-00805f9b34fb" }
+
+                   }
+               },
+           });
+            //Device = await BluetoothNavigator.RequestDevice(
+            //new RequestDeviceQuery
+            //{
+            //    AcceptAllDevices = true
+            //});
         }
         catch (Exception e)
         {
@@ -66,10 +80,10 @@ public partial class Index
             }
             else
             {
-                var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-                var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
+                //var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
+                //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
 
-                await characteristic.StopNotifications();
+                //await characteristic.StopNotifications();
 
                 await Device.Gatt.Disonnect();
                 Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
@@ -125,7 +139,7 @@ public partial class Index
 
         try
         {
-            var service2 = await Device.Gatt.GetPrimaryService("0000180A-0000-1000-8000-00805F9B34FB");
+            var service2 = await Device.Gatt.GetPrimaryService("0000180a-0000-1000-8000-00805f9b34fb");
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
 
