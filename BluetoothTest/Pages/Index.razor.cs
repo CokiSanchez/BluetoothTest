@@ -41,24 +41,10 @@ public partial class Index
         try
         {
             Device = await BluetoothNavigator.RequestDevice(
-           new RequestDeviceQuery
-           {
-               Filters = new List<Filter>
-               {
-                   new Filter
-                   {
-                       Name= "printer",
-                       NamePrefix = "prnt",
-                       Services = new List<object>{"0000180A-0000-1000-8000-00805F9B34FB" }
-
-                   }
-               },
-           });
-            //Device = await BluetoothNavigator.RequestDevice(
-            //new RequestDeviceQuery
-            //{
-            //    AcceptAllDevices = true
-            //});
+            new RequestDeviceQuery
+            {
+                AcceptAllDevices = true
+            });
         }
         catch (Exception e)
         {
