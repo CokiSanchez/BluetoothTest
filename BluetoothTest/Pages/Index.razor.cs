@@ -1,24 +1,27 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
+using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace BluetoothTest.Pages;
 
-public partial class Index
+public partial class Index : IDisposable
 {
     [Inject]
-    private IBluetoothNavigator BluetoothNavigator { get; set; } = null!;
+    private IBluetoothNavigator? BluetoothNavigator { get; set; }
     private IDevice? Device { get; set; }
     private IBluetoothRemoteGATTCharacteristic? Characteristic { get; set; }
 
     private bool Available { get; set; } = false;
     private List<string> Logs { get; set; } = new();
     private string Error { get; set; } = string.Empty;
-
     private string Text { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        if (BluetoothNavigator is null)
+            return;
+
         BluetoothNavigator.OnAvailabilityChanged += async () => await OnAvailabilityChanged();
         await BuscarServicio();
     }
@@ -30,6 +33,9 @@ public partial class Index
 
     private async Task BuscarServicio()
     {
+        if (BluetoothNavigator is null)
+            return;
+
         try
         {
             Available = await BluetoothNavigator.GetAvailability();
@@ -42,6 +48,9 @@ public partial class Index
 
     private async Task BuscarDispositivos()
     {
+        if (BluetoothNavigator is null)
+            return;
+
         try
         {
             var filter = new Filter
@@ -109,6 +118,7 @@ public partial class Index
         }
         catch (Exception e)
         {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error: {e.Message}.");
             Error = e.Message;
         }
     }
@@ -120,10 +130,12 @@ public partial class Index
         if (Device is null)
             return;
 
+        if (!Device.Gatt.Connected)
+            return;
+
         var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
 
         Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
-
 
         Characteristic = await service.GetCharacteristic("00002af1-0000-1000-8000-00805f9b34fb");
 
@@ -160,8 +172,12 @@ public partial class Index
         if (Device is null)
             return;
 
+        if (Characteristic is null)
+            return;
+
         try
         {
+            await Characteristic.StopNotifications();
             //var service2 = await Device.Gatt.GetPrimaryService("0000180a-0000-1000-8000-00805f9b34fb");
 
             //Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
@@ -212,5 +228,22 @@ public partial class Index
             Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar. {e.Message}");
         }
         //await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));        
+    }
+
+    public void Dispose()
+    {
+        if (Characteristic is not null)
+        {
+            Characteristic.OnRaiseCharacteristicValueChanged -= (sender, e) => { };
+            Characteristic.StopNotifications();
+        }
+
+        Device?.Gatt.Disonnect();
+
+        BluetoothNavigator = null;
+        Device = null;
+        Characteristic = null;
+
+        GC.SuppressFinalize(this);
     }
 }
