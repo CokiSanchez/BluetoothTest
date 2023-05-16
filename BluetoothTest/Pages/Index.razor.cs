@@ -101,18 +101,18 @@ public partial class Index
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Gatt.DeviceUuid.ToLower()}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 0000ffe0-0000-1000-8000-00805f9b34fb.");
 
         if (Device is null)
             return;
 
         try
         {
-            var service = await Device.Gatt.GetPrimaryService(Device?.Gatt.DeviceUuid.ToLower());
+            var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
-            var characteristic = await service.GetCharacteristic(service.Uuid.ToLower());
+            var characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic.Value} {characteristic.Uuid}.");
 
