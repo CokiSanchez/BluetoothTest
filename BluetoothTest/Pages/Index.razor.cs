@@ -1,5 +1,6 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
+using System.Text;
 
 namespace BluetoothTest.Pages;
 
@@ -8,6 +9,7 @@ public partial class Index
     [Inject]
     private IBluetoothNavigator BluetoothNavigator { get; set; } = null!;
     private IDevice? Device { get; set; }
+    private IBluetoothRemoteGATTCharacteristic? Characteristic { get; set; }
 
     private bool Available { get; set; } = false;
     private List<string> Logs { get; set; } = new();
@@ -88,8 +90,7 @@ public partial class Index
             if (connect)
             {
                 await Device.Gatt.Connect();
-                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} {Device.Id} conectado.");
-                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Gatt.DeviceUuid} conectado.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
             }
             else
             {
@@ -123,22 +124,32 @@ public partial class Index
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
-            var characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+            Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic.Value} {characteristic.Uuid}.");
+            if (Characteristic is null)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+                return;
+            }
 
-            //var service = await Device!.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-            //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-            //if (characteristic.Properties.Write)
-            //{
-            //    characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-            //    {
-            //        Logs.Add($"{DateTime.Now:HH:mm} - Evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
 
-            //    };
-            //    await characteristic.StartNotifications();
-            //    //await characteristic.WriteValueWithResponse(/* Your byte array */);
-            //}
+            if (Characteristic.Properties.Write)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
+
+                Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+                {
+                    Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+
+                };
+
+                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+
+
+                await Characteristic.StartNotifications();
+                await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));
+            }
         }
         catch (Exception e)
         {
