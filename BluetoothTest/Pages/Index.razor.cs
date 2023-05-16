@@ -15,6 +15,8 @@ public partial class Index
     private List<string> Logs { get; set; } = new();
     private string Error { get; set; } = string.Empty;
 
+    private string Text { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         BluetoothNavigator.OnAvailabilityChanged += async () => await OnAvailabilityChanged();
@@ -148,7 +150,6 @@ public partial class Index
 
 
                 await Characteristic.StartNotifications();
-                await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));
             }
         }
         catch (Exception e)
@@ -192,5 +193,30 @@ public partial class Index
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
             Error = e.Message;
         }
+    }
+
+    private async Task Enviar()
+    {
+        if (Characteristic is null)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Text))
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar.");
+            return;
+        }
+
+        try
+        {
+            await Characteristic.WriteValueWithoutResponse(Encoding.ASCII.GetBytes(Text));
+        }
+        catch (Exception e)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar. {e.Message}");
+        }
+        //await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));        
     }
 }
