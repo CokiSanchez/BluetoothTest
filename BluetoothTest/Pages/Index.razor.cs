@@ -120,41 +120,41 @@ public partial class Index
         if (Device is null)
             return;
 
-
         var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
 
         Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
-        Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
-
-        if (Characteristic is null)
+        try
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
-            return;
-        }
+            Characteristic = await service.GetCharacteristic("00002af1-0000-1000-8000-00805f9b34fb");
 
-        Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
-
-        if (Characteristic.Properties.Write)
-        {
-            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
-
-            Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+            if (Characteristic is null)
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
-            };
+                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
+                return;
+            }
 
-            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
 
-            try
+            if (Characteristic.Properties.Write)
             {
+                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
+
+                Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+                {
+                    Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+                };
+
+                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+
+
                 await Characteristic.StartNotifications();
             }
-            catch (Exception e)
-            {
-                Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
-                Error = e.Message;
-            }
+        }
+        catch (Exception e)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+            Error = e.Message;
         }
     }
 
