@@ -78,6 +78,7 @@ public partial class Index
             {
                 await Device.Gatt.Connect();
                 Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} {Device.Id} conectado.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Gatt.DeviceUuid} conectado.");
             }
             else
             {
@@ -100,14 +101,14 @@ public partial class Index
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Id}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Gatt.DeviceUuid.ToLower()}.");
 
         if (Device is null)
             return;
 
         try
         {
-            var service = await Device.Gatt.GetPrimaryService(Device.Id.ToLower());
+            var service = await Device.Gatt.GetPrimaryService(Device?.Gatt.DeviceUuid.ToLower());
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
