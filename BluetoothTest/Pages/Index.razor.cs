@@ -1,5 +1,6 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
+using System.Reflection.PortableExecutable;
 
 namespace BluetoothTest.Pages;
 
@@ -76,7 +77,7 @@ public partial class Index
             if (connect)
             {
                 await Device.Gatt.Connect();
-                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} {Device.Id} conectado.");
             }
             else
             {
@@ -86,7 +87,7 @@ public partial class Index
                 //await characteristic.StopNotifications();
 
                 await Device.Gatt.Disonnect();
-                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} desconectado.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} {Device.Id} desconectado.");
                 Device = null;
                 Logs.Clear();
             }
@@ -99,18 +100,18 @@ public partial class Index
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Gatt.DeviceUuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device?.Id}.");
 
         if (Device is null)
             return;
 
         try
         {
-            var service = await Device.Gatt.GetPrimaryService(Device.Id);
+            var service = await Device.Gatt.GetPrimaryService(Device.Id.ToLower());
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
-            var characteristic = await service.GetCharacteristic(service.Uuid);
+            var characteristic = await service.GetCharacteristic(service.Uuid.ToLower());
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic.Value} {characteristic.Uuid}.");
 
@@ -129,23 +130,27 @@ public partial class Index
         }
         catch (Exception e)
         {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
             Error = e.Message;
         }
     }
 
     private async Task DetenerServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Deteniendo servicios para {Device.Gatt.DeviceUuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Deteniendo servicios para {Device?.Gatt.DeviceUuid}.");
+
+        if (Device is null)
+            return;
 
         try
         {
-            var service2 = await Device.Gatt.GetPrimaryService("0000180a-0000-1000-8000-00805f9b34fb");
+            //var service2 = await Device.Gatt.GetPrimaryService("0000180a-0000-1000-8000-00805f9b34fb");
 
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
+            //Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
 
-            var characteristic2 = await service2.GetCharacteristic(service2.Uuid);
+            //var characteristic2 = await service2.GetCharacteristic(service2.Uuid);
 
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic2.Value} {characteristic2.Uuid}.");
+            //Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic2.Value} {characteristic2.Uuid}.");
 
 
             //var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
@@ -161,7 +166,7 @@ public partial class Index
         }
         catch (Exception e)
         {
-
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
             Error = e.Message;
         }
     }
