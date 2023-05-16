@@ -63,7 +63,7 @@ public partial class Index
                     "000018f0-0000-1000-8000-00805f9b34fb",
                     "0000ffe0-0000-1000-8000-00805f9b34fb",
                 },
-                Filters = new List<Filter> { filter },
+                //Filters = new List<Filter> { filter },
             });
 
             //Device = await BluetoothNavigator.RequestDevice(
