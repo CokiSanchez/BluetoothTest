@@ -136,20 +136,15 @@ public partial class Index
 
             Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
 
-            if (Characteristic.Properties.Write)
+            Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+            };
 
-                Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-                {
-                    Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
-                };
+            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
 
-                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+            await Characteristic.StartNotifications();
 
-
-                await Characteristic.StartNotifications();
-            }
         }
         catch (Exception e)
         {
@@ -210,7 +205,7 @@ public partial class Index
 
         try
         {
-            await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes(Text));
+            await Characteristic.WriteValueWithoutResponse(Encoding.ASCII.GetBytes(Text));
         }
         catch (Exception e)
         {
