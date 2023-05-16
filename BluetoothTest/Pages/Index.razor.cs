@@ -40,25 +40,25 @@ public partial class Index
     {
         try
         {
-            Device = await BluetoothNavigator.RequestDevice(
-           new RequestDeviceQuery
-           {
-               Filters = new List<Filter>
-               {
-                   new Filter
-                   {
-                       Name= "printer",
-                       NamePrefix = "prnt",
-                       Services = new List<object>{"0000180a-0000-1000-8000-00805f9b34fb" }
-
-                   }
-               },
-           });
-            //Device = await BluetoothNavigator.RequestDevice(
+            // Device = await BluetoothNavigator.RequestDevice(
             //new RequestDeviceQuery
             //{
-            //    AcceptAllDevices = true
+            //    Filters = new List<Filter>
+            //    {
+            //        new Filter
+            //        {
+            //            Name= "printer",
+            //            NamePrefix = "prnt",
+            //            Services = new List<object>{"0000180a-0000-1000-8000-00805f9b34fb" }
+
+            //        }
+            //    },
             //});
+            Device = await BluetoothNavigator.RequestDevice(
+            new RequestDeviceQuery
+            {
+                AcceptAllDevices = true
+            });
         }
         catch (Exception e)
         {
