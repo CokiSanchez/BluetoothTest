@@ -124,27 +124,27 @@ public partial class Index
 
         Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
+
+        Characteristic = await service.GetCharacteristic("00002af1-0000-1000-8000-00805f9b34fb");
+
+        if (Characteristic is null)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            return;
+        }
+
+        Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
+
+        Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {Encoding.Default.GetString(e.Value)}.");
+        };
+
+        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+
         try
         {
-            Characteristic = await service.GetCharacteristic("00002af1-0000-1000-8000-00805f9b34fb");
-
-            if (Characteristic is null)
-            {
-                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
-                return;
-            }
-
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
-
-            Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-            {
-                Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
-            };
-
-            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
-
-            await Characteristic.StartNotifications();
-
+            //await Characteristic.StartNotifications();
         }
         catch (Exception e)
         {
@@ -193,7 +193,7 @@ public partial class Index
     {
         if (Characteristic is null)
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
             return;
         }
 
