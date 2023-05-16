@@ -120,42 +120,41 @@ public partial class Index
         if (Device is null)
             return;
 
-        try
+
+        var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
+
+        Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
+
+        Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+
+        if (Characteristic is null)
         {
-            var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            return;
+        }
 
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
 
-            Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+        if (Characteristic.Properties.Write)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
 
-            if (Characteristic is null)
+            Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
-                return;
-            }
+                Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
+            };
 
-            Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
+            Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
 
-            if (Characteristic.Properties.Write)
+            try
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} puede escribir.");
-
-                Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-                {
-                    Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {e.Value}.");
-
-                };
-
-                Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
-
-
                 await Characteristic.StartNotifications();
             }
-        }
-        catch (Exception e)
-        {
-            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
-            Error = e.Message;
+            catch (Exception e)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+                Error = e.Message;
+            }
         }
     }
 
@@ -211,7 +210,7 @@ public partial class Index
 
         try
         {
-            await Characteristic.WriteValueWithoutResponse(Encoding.ASCII.GetBytes(Text));
+            await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes(Text));
         }
         catch (Exception e)
         {

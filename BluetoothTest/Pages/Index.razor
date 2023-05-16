@@ -28,11 +28,11 @@
             <label>ID: @Device?.Id</label>
             <label>Estado: @((Device?.Gatt.Connected ?? false) ? "Conectado" : "Desconectado")</label>
         </div>
-        <div class="col">
+        <div class="col-12">
             <button class="btn btn-primary m-2" @onclick="ComenzarServicios">Comenzar servicios</button>
             <button class="btn btn-primary m-2" @onclick="DetenerServicios">Detener servicios</button>
         </div>
-        <div class="col">
+        <div class="col-12 @(Characteristic is null ? "d-none" : "")">
             <EditForm Model="Text" OnValidSubmit="Enviar">
                 <InputText class="form-control" @bind-Value="Text" />
                 <button class="btn btn-primary m-2">Enviar</button>
