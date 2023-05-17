@@ -221,13 +221,25 @@ public partial class Index : IDisposable
 
         try
         {
-            await Characteristic.WriteValueWithoutResponse(Encoding.ASCII.GetBytes(Text));
+            await Characteristic.WriteValueWithoutResponse(Formatear(Text));
         }
         catch (Exception e)
         {
             Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar. {e.Message}");
         }
         //await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));        
+    }
+
+    private byte[] Formatear(string text)
+    {
+        var ms = new MemoryStream();
+        ms.WriteByte(0x1b);
+        ms.WriteByte(0x1b);
+        ms.WriteByte(0x1b);
+        ms.WriteByte(0x1b);
+
+    
+        return 
     }
 
     public void Dispose()
