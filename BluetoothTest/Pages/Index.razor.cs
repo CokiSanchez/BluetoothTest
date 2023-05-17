@@ -123,6 +123,20 @@ public partial class Index : IDisposable
         }
     }
 
+    private async Task BuscarServicios()
+    {
+        if (Device is null)
+            return;
+
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
+
+        var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
+
+        Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services.Select(s => s.Uuid))}.");
+
+
+    }
+
     private async Task ComenzarServicios()
     {
         Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
@@ -227,7 +241,6 @@ public partial class Index : IDisposable
         {
             Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar. {e.Message}");
         }
-        //await Characteristic.WriteValueWithResponse(Encoding.ASCII.GetBytes("0x037A"));        
     }
 
     private byte[] Formatear(string text)
