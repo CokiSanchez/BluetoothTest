@@ -130,10 +130,17 @@ public partial class Index : IDisposable
 
         Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
 
-        var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
+        try
+        {
+            var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
+            Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services?.Select(s => s.Uuid) ?? Array.Empty<string>())}.");
+        }
+        catch (Exception e)
+        {
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services.Select(s => s.Uuid))}.");
-
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+            Error = e.Message;
+        }
     }
 
     private async Task ComenzarServicios()
