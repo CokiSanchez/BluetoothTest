@@ -234,12 +234,13 @@ public partial class Index : IDisposable
     {
         var ms = new MemoryStream();
         ms.WriteByte(0x1b);
+        ms.WriteByte(0x40);
+        ms.Write(Encoding.ASCII.GetBytes(text), 0, text.Length);
         ms.WriteByte(0x1b);
-        ms.WriteByte(0x1b);
-        ms.WriteByte(0x1b);
+        ms.WriteByte(Convert.ToByte('d'));
+        ms.WriteByte(Convert.ToByte(1)); // 1 línea
 
-    
-        return 
+        return ms.ToArray();
     }
 
     public void Dispose()
