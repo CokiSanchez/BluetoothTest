@@ -244,7 +244,13 @@ public partial class Index : IDisposable
 
         try
         {
-            await Characteristic.WriteValueWithoutResponse(Formatear(Text));
+            var chunks = Formatear(Text);
+
+            foreach (var chunk in chunks)
+            {
+                await Characteristic.WriteValueWithoutResponse(chunk);
+            }
+
         }
         catch (Exception e)
         {
@@ -252,13 +258,15 @@ public partial class Index : IDisposable
         }
     }
 
-    private byte[] Formatear(string text)
+    private IEnumerable<byte[]> Formatear(string text)
     {
         var texto = Encoding.ASCII.GetBytes(PrintDriver(Parte));
 
         Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {texto.Length} de tamaño");
 
-        return texto;
+        var chunks = texto.Chunk(512);
+
+        return chunks;
     }
 
     private string PrintDriver(string toPrint)
