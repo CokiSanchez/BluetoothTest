@@ -244,7 +244,7 @@ public partial class Index : IDisposable
 
         try
         {
-            await Characteristic.WriteValueWithResponse(Formatear(Text));
+            await Characteristic.WriteValueWithoutResponse(Formatear(Text));
         }
         catch (Exception e)
         {
@@ -254,20 +254,11 @@ public partial class Index : IDisposable
 
     private byte[] Formatear(string text)
     {
-        var texto = PrintDriver(Parte);
+        var texto = Encoding.ASCII.GetBytes(PrintDriver(Parte));
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {Parte.Length} de tamaño");
+        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {texto.Length} de tamaño");
 
-
-        var ms = new MemoryStream();
-        //ms.WriteByte(0x1b);
-        //ms.WriteByte(0x40);
-        ms.Write(Encoding.ASCII.GetBytes(texto), 0, texto.Length);
-        //ms.WriteByte(0x1b);
-        //ms.WriteByte(Convert.ToByte('d'));
-        //ms.WriteByte(Convert.ToByte(1)); // 1 línea
-
-        return ms.ToArray();
+        return texto;
     }
 
     private string PrintDriver(string toPrint)
