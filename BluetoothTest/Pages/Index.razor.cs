@@ -17,7 +17,7 @@ public partial class Index : IDisposable
     private string Error { get; set; } = string.Empty;
     private string Text { get; set; } = string.Empty;
 
-    private string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} {Citacion_Tipo} {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: {Citacion_IdNrPedido}{NLN}{ESCa0}{TABH}";
+    private string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} {Citacion_Tipo} {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: {Citacion_IdNrPedido}{NLN}{ESCa0}{TABH}".Replace("{", "").Replace("}", "");
 
     protected override async Task OnInitializedAsync()
     {
