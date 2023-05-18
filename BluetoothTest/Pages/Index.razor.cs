@@ -22,7 +22,7 @@ public partial class Index : IDisposable
     {
         var lineas = Parte.Split("{NLN}").ToList();
 
-        var lineasSalto = lineas.Select(l => l = $"{l} {{NLN}}").ToList();
+        var lineasSalto = lineas.Select(l => l = $"{l} {{NLN}} ").ToList();
 
 
         if (BluetoothNavigator is null)
@@ -251,7 +251,7 @@ public partial class Index : IDisposable
 
             foreach (var linea in lineas)
             {
-                var chunk = Formatear($"{linea} {{NLN}}");
+                var chunk = Formatear($"{linea} {{NLN}} ");
 
                 Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
 
