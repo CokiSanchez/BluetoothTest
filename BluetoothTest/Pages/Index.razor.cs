@@ -246,7 +246,7 @@ public partial class Index : IDisposable
 
             foreach (var linea in lineas)
             {
-                var chunk = Formatear(linea);
+                var chunk = Formatear($"{linea}{{NLN}}");
 
                 Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
 
