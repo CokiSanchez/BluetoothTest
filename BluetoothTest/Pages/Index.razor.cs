@@ -242,20 +242,14 @@ public partial class Index : IDisposable
 
         try
         {
-            var a = Encoding.ASCII.GetBytes(PrintDriver(Parte));
-            Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {a.Length} de tamaño");
+            var chunks = Formatear(Text);
 
-            await Characteristic.WriteValueWithoutResponse(a);
+            foreach (var chunk in chunks)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
 
-
-            //var chunks = Formatear(Text);
-
-            //foreach (var chunk in chunks)
-            //{
-            //    Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
-
-            //    await Characteristic.WriteValueWithoutResponse(chunk);
-            //}
+                await Characteristic.WriteValueWithoutResponse(chunk);
+            }
 
         }
         catch (Exception e)
