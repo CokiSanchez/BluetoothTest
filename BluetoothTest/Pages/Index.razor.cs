@@ -1,8 +1,6 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
-using System.Reflection.PortableExecutable;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BluetoothTest.Pages;
 
@@ -148,7 +146,7 @@ public partial class Index : IDisposable
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 0000ffe0-0000-1000-8000-00805f9b34fb.");
 
         if (Device is null)
             return;
@@ -156,15 +154,15 @@ public partial class Index : IDisposable
         if (!Device.Gatt.Connected)
             return;
 
-        var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
+        var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
 
         Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
 
-        Characteristic = await service.GetCharacteristic("00002af1-0000-1000-8000-00805f9b34fb");
+        Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
         if (Characteristic is null)
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
             return;
         }
 
@@ -244,12 +242,20 @@ public partial class Index : IDisposable
 
         try
         {
-            var chunks = Formatear(Text);
+            var a = Encoding.ASCII.GetBytes(PrintDriver(Parte));
+            Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {a.Length} de tamaño");
 
-            foreach (var chunk in chunks)
-            {
-                await Characteristic.WriteValueWithoutResponse(chunk);
-            }
+            await Characteristic.WriteValueWithoutResponse(a);
+
+
+            //var chunks = Formatear(Text);
+
+            //foreach (var chunk in chunks)
+            //{
+            //    Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
+
+            //    await Characteristic.WriteValueWithoutResponse(chunk);
+            //}
 
         }
         catch (Exception e)
@@ -262,9 +268,7 @@ public partial class Index : IDisposable
     {
         var texto = Encoding.ASCII.GetBytes(PrintDriver(Parte));
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {texto.Length} de tamaño");
-
-        var chunks = texto.Chunk(512);
+        var chunks = texto.Chunk(256);
 
         return chunks;
     }
