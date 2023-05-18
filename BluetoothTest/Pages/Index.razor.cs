@@ -242,15 +242,16 @@ public partial class Index : IDisposable
 
         try
         {
-            var chunks = Formatear(Text);
+            var lineas = Text.Split("{NLN}");
 
-            foreach (var chunk in chunks)
+            foreach (var linea in lineas)
             {
+                var chunk = Formatear(linea);
+
                 Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
 
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
-
         }
         catch (Exception e)
         {
@@ -258,13 +259,14 @@ public partial class Index : IDisposable
         }
     }
 
-    private IEnumerable<byte[]> Formatear(string text)
+    private byte[] Formatear(string text)
     {
-        var texto = Encoding.ASCII.GetBytes(PrintDriver(Parte));
+        var texto = Encoding.ASCII.GetBytes(PrintDriver(text));
 
-        var chunks = texto.Chunk(256);
+        return texto;
+        //var chunks = texto.Chunk(256);
 
-        return chunks;
+        //return chunks;
     }
 
     private string PrintDriver(string toPrint)
