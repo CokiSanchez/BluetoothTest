@@ -256,7 +256,7 @@ public partial class Index : IDisposable
     {
         var texto = PrintDriver(Parte);
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {text.Length} de tamaño");
+        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {Parte.Length} de tamaño");
 
 
         var ms = new MemoryStream();
