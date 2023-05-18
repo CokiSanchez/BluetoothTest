@@ -17,6 +17,8 @@ public partial class Index : IDisposable
     private string Error { get; set; } = string.Empty;
     private string Text { get; set; } = string.Empty;
 
+    private string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} {Citacion_Tipo} {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: {Citacion_IdNrPedido}{NLN}{ESCa0}{TABH}";
+
     protected override async Task OnInitializedAsync()
     {
         if (BluetoothNavigator is null)
@@ -254,7 +256,7 @@ public partial class Index : IDisposable
         var ms = new MemoryStream();
         ms.WriteByte(0x1b);
         ms.WriteByte(0x40);
-        ms.Write(Encoding.ASCII.GetBytes(text), 0, text.Length);
+        ms.Write(Encoding.ASCII.GetBytes(Parte), 0, text.Length);
         ms.WriteByte(0x1b);
         ms.WriteByte(Convert.ToByte('d'));
         ms.WriteByte(Convert.ToByte(1)); // 1 línea
