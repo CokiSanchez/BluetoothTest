@@ -262,7 +262,7 @@ public partial class Index : IDisposable
     {
         var texto = Encoding.ASCII.GetBytes(PrintDriver(Parte));
 
-        var chunks = texto.Chunk(256);
+        var chunks = texto.Chunk(128);
 
         return chunks;
     }
