@@ -254,13 +254,15 @@ public partial class Index : IDisposable
 
     private byte[] Formatear(string text)
     {
+        var texto = PrintDriver(Parte);
+
         var ms = new MemoryStream();
-        ms.WriteByte(0x1b);
-        ms.WriteByte(0x40);
-        ms.Write(Encoding.ASCII.GetBytes(PrintDriver(Parte)), 0, text.Length);
-        ms.WriteByte(0x1b);
-        ms.WriteByte(Convert.ToByte('d'));
-        ms.WriteByte(Convert.ToByte(1)); // 1 línea
+        //ms.WriteByte(0x1b);
+        //ms.WriteByte(0x40);
+        ms.Write(Encoding.ASCII.GetBytes(texto), 0, texto.Length);
+        //ms.WriteByte(0x1b);
+        //ms.WriteByte(Convert.ToByte('d'));
+        //ms.WriteByte(Convert.ToByte(1)); // 1 línea
 
         return ms.ToArray();
     }
