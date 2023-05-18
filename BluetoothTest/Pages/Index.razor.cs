@@ -244,7 +244,7 @@ public partial class Index : IDisposable
 
         try
         {
-            await Characteristic.WriteValueWithoutResponse(Formatear(Text));
+            await Characteristic.WriteValueWithResponse(Formatear(Text));
         }
         catch (Exception e)
         {
@@ -255,6 +255,9 @@ public partial class Index : IDisposable
     private byte[] Formatear(string text)
     {
         var texto = PrintDriver(Parte);
+
+        Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {text.Length} de tamaño");
+
 
         var ms = new MemoryStream();
         //ms.WriteByte(0x1b);
@@ -269,69 +272,69 @@ public partial class Index : IDisposable
 
     private string PrintDriver(string toPrint)
     {
-        
-            toPrint = toPrint.Replace("{ESC@}", "\u001b\u0040");//inicializa Impresora    	
-            toPrint = toPrint.Replace("{ESCS}", "\u001b\u0053");//Standar Mode
 
-            toPrint = toPrint.Replace("{ESCR0}", "\u001b\u0052\u0000");//Caracteres USA
-            toPrint = toPrint.Replace("{ESCR1}", "\u001b\u0052\u0001");// Caracteres France
-            toPrint = toPrint.Replace("{ESCR2}", "\u001b\u0052\u0002");// Caracteres Germany
-            toPrint = toPrint.Replace("{ESCR3}", "\u001b\u0052\u0003");// Caracteres UK
-            toPrint = toPrint.Replace("{ESCR4}", "\u001b\u0052\u0004");// Caracteres DENMARK
-            toPrint = toPrint.Replace("{ESCR5}", "\u001b\u0052\u0005");// Caracteres Sweden
-            toPrint = toPrint.Replace("{ESCR6}", "\u001b\u0052\u0006");// Caracteres Italy
-            toPrint = toPrint.Replace("{ESCR7}", "\u001b\u0052\u0007");// Caracteres Spain
-            toPrint = toPrint.Replace("{ESCR8}", "\u001b\u0052\u0008");// Caracteres Japan
-            toPrint = toPrint.Replace("{ESCR9}", "\u001b\u0052\u0009");// Caracteres Norway
+        toPrint = toPrint.Replace("{ESC@}", "\u001b\u0040");//inicializa Impresora    	
+        toPrint = toPrint.Replace("{ESCS}", "\u001b\u0053");//Standar Mode
 
-            toPrint = toPrint.Replace("{ESCt0}", "\u001b\u0074\u0000");//inicializa PC437
-            toPrint = toPrint.Replace("{ESCt1}", "\u001b\u0074\u0001");//inicializa kATAKANA
-            toPrint = toPrint.Replace("{ESCt2}", "\u001b\u0074\u0002");//inicializa PC850 MultiLengual
-            toPrint = toPrint.Replace("{ESCt3}", "\u001b\u0074\u0003");//inicializa PC860
-            toPrint = toPrint.Replace("{ESCt4}", "\u001b\u0074\u0004");//inicializa PC863
+        toPrint = toPrint.Replace("{ESCR0}", "\u001b\u0052\u0000");//Caracteres USA
+        toPrint = toPrint.Replace("{ESCR1}", "\u001b\u0052\u0001");// Caracteres France
+        toPrint = toPrint.Replace("{ESCR2}", "\u001b\u0052\u0002");// Caracteres Germany
+        toPrint = toPrint.Replace("{ESCR3}", "\u001b\u0052\u0003");// Caracteres UK
+        toPrint = toPrint.Replace("{ESCR4}", "\u001b\u0052\u0004");// Caracteres DENMARK
+        toPrint = toPrint.Replace("{ESCR5}", "\u001b\u0052\u0005");// Caracteres Sweden
+        toPrint = toPrint.Replace("{ESCR6}", "\u001b\u0052\u0006");// Caracteres Italy
+        toPrint = toPrint.Replace("{ESCR7}", "\u001b\u0052\u0007");// Caracteres Spain
+        toPrint = toPrint.Replace("{ESCR8}", "\u001b\u0052\u0008");// Caracteres Japan
+        toPrint = toPrint.Replace("{ESCR9}", "\u001b\u0052\u0009");// Caracteres Norway
 
-            toPrint = toPrint.Replace("{ESCa0}", "\u001b\u0061\u0000");//Texto a la Izquierda
-            toPrint = toPrint.Replace("{ESCa1}", "\u001b\u0061\u0001");//Centra Texto
-            toPrint = toPrint.Replace("{ESCa2}", "\u001b\u0061\u0002");//Texto a La derecha 
-            toPrint = toPrint.Replace("{ESCE1}", "\u001b\u0045\u0001");//Negrita    	
-            toPrint = toPrint.Replace("{ESCE0}", "\u001b\u0045\u0000");//Quitar Negrita
-            toPrint = toPrint.Replace("{ESC!00}", "\u001d\u0021\u0000");//TamaÃƒÂ±o Caracteres regular 12
-            toPrint = toPrint.Replace("{ESC!01}", "\u001d\u0021\u0001");//TamaÃƒÂ±o Caracteres altura 14
-            toPrint = toPrint.Replace("{ESC!02}", "\u001d\u0021\u0002");//TamaÃƒÂ±o Caracteres altura 16
-            toPrint = toPrint.Replace("{ESC!03}", "\u001d\u0021\u0003");//TamaÃƒÂ±o Caracteres altura 18
-            toPrint = toPrint.Replace("{ESC!04}", "\u001d\u0021\u0004");//TamaÃƒÂ±o Caracteres altura 20
-            toPrint = toPrint.Replace("{ESC!05}", "\u001d\u0021\u0005");//TamaÃƒÂ±o Caracteres altura 22
-            toPrint = toPrint.Replace("{ESC!06}", "\u001d\u0021\u0006");//TamaÃƒÂ±o Caracteres altura 24
-            toPrint = toPrint.Replace("{ESC!07}", "\u001d\u0021\u0007");//TamaÃƒÂ±o Caracteres altura 26	    	
-            toPrint = toPrint.Replace("{ESC!10}", "\u001d\u0021\u0010");//TamaÃƒÂ±o Caracteres ancho 14
-            toPrint = toPrint.Replace("{ESC!20}", "\u001d\u0021\u0020");//TamaÃƒÂ±o Caracteres ancho 16
-            toPrint = toPrint.Replace("{ESC!30}", "\u001d\u0021\u0030");//TamaÃƒÂ±o Caracteres ancho 18
-            toPrint = toPrint.Replace("{ESC!40}", "\u001d\u0021\u0040");//TamaÃƒÂ±o Caracteres ancho 20
-            toPrint = toPrint.Replace("{ESC!50}", "\u001d\u0021\u0050");//TamaÃƒÂ±o Caracteres ancho 22
-            toPrint = toPrint.Replace("{ESC!60}", "\u001d\u0021\u0060");//TamaÃƒÂ±o Caracteres ancho 22
-            toPrint = toPrint.Replace("{ESC!70}", "\u001d\u0021\u0070");//TamaÃƒÂ±o Caracteres ancho 22	    	
-            toPrint = toPrint.Replace("{GSB1}", "\u001d\u0042\u0001");// White/Black Invertido pg 15
-            toPrint = toPrint.Replace("{GSB0}", "\u001d\u0042\u0000");// Normal White/Black Invertido pg 15
-            toPrint = toPrint.Replace("{ESC-0}", "\u001b\u002d\u0000");// Finaliza Subrayado Pg 12
-            toPrint = toPrint.Replace("{ESC-1}", "\u001b\u002d\u0001");// Inicia Subrayado Pg 12
-            toPrint = toPrint.Replace("{ESC-2}", "\u001b\u002d\u0002");// Inicia Subrayado doble Pg 12
-            toPrint = toPrint.Replace("{BARC}", "\u001d\u0068\u0070\u001d\u0077\u0003\u001d\u006b\u0049\u000c"); //Barcodes..
+        toPrint = toPrint.Replace("{ESCt0}", "\u001b\u0074\u0000");//inicializa PC437
+        toPrint = toPrint.Replace("{ESCt1}", "\u001b\u0074\u0001");//inicializa kATAKANA
+        toPrint = toPrint.Replace("{ESCt2}", "\u001b\u0074\u0002");//inicializa PC850 MultiLengual
+        toPrint = toPrint.Replace("{ESCt3}", "\u001b\u0074\u0003");//inicializa PC860
+        toPrint = toPrint.Replace("{ESCt4}", "\u001b\u0074\u0004");//inicializa PC863
 
-            //toPrint = toPrint.Replace("{TABH}","\u001b\u0044\u0002\u0010" + "\u0022\u0000");//Setting Horizontal Tab - Pg. 3-27
-            toPrint = toPrint.Replace("{TABH}", "\u001b\u0044\u0002\u0010\u0000");//Setting Horizontal Tab - Pg. 3-27
+        toPrint = toPrint.Replace("{ESCa0}", "\u001b\u0061\u0000");//Texto a la Izquierda
+        toPrint = toPrint.Replace("{ESCa1}", "\u001b\u0061\u0001");//Centra Texto
+        toPrint = toPrint.Replace("{ESCa2}", "\u001b\u0061\u0002");//Texto a La derecha 
+        toPrint = toPrint.Replace("{ESCE1}", "\u001b\u0045\u0001");//Negrita    	
+        toPrint = toPrint.Replace("{ESCE0}", "\u001b\u0045\u0000");//Quitar Negrita
+        toPrint = toPrint.Replace("{ESC!00}", "\u001d\u0021\u0000");//TamaÃƒÂ±o Caracteres regular 12
+        toPrint = toPrint.Replace("{ESC!01}", "\u001d\u0021\u0001");//TamaÃƒÂ±o Caracteres altura 14
+        toPrint = toPrint.Replace("{ESC!02}", "\u001d\u0021\u0002");//TamaÃƒÂ±o Caracteres altura 16
+        toPrint = toPrint.Replace("{ESC!03}", "\u001d\u0021\u0003");//TamaÃƒÂ±o Caracteres altura 18
+        toPrint = toPrint.Replace("{ESC!04}", "\u001d\u0021\u0004");//TamaÃƒÂ±o Caracteres altura 20
+        toPrint = toPrint.Replace("{ESC!05}", "\u001d\u0021\u0005");//TamaÃƒÂ±o Caracteres altura 22
+        toPrint = toPrint.Replace("{ESC!06}", "\u001d\u0021\u0006");//TamaÃƒÂ±o Caracteres altura 24
+        toPrint = toPrint.Replace("{ESC!07}", "\u001d\u0021\u0007");//TamaÃƒÂ±o Caracteres altura 26	    	
+        toPrint = toPrint.Replace("{ESC!10}", "\u001d\u0021\u0010");//TamaÃƒÂ±o Caracteres ancho 14
+        toPrint = toPrint.Replace("{ESC!20}", "\u001d\u0021\u0020");//TamaÃƒÂ±o Caracteres ancho 16
+        toPrint = toPrint.Replace("{ESC!30}", "\u001d\u0021\u0030");//TamaÃƒÂ±o Caracteres ancho 18
+        toPrint = toPrint.Replace("{ESC!40}", "\u001d\u0021\u0040");//TamaÃƒÂ±o Caracteres ancho 20
+        toPrint = toPrint.Replace("{ESC!50}", "\u001d\u0021\u0050");//TamaÃƒÂ±o Caracteres ancho 22
+        toPrint = toPrint.Replace("{ESC!60}", "\u001d\u0021\u0060");//TamaÃƒÂ±o Caracteres ancho 22
+        toPrint = toPrint.Replace("{ESC!70}", "\u001d\u0021\u0070");//TamaÃƒÂ±o Caracteres ancho 22	    	
+        toPrint = toPrint.Replace("{GSB1}", "\u001d\u0042\u0001");// White/Black Invertido pg 15
+        toPrint = toPrint.Replace("{GSB0}", "\u001d\u0042\u0000");// Normal White/Black Invertido pg 15
+        toPrint = toPrint.Replace("{ESC-0}", "\u001b\u002d\u0000");// Finaliza Subrayado Pg 12
+        toPrint = toPrint.Replace("{ESC-1}", "\u001b\u002d\u0001");// Inicia Subrayado Pg 12
+        toPrint = toPrint.Replace("{ESC-2}", "\u001b\u002d\u0002");// Inicia Subrayado doble Pg 12
+        toPrint = toPrint.Replace("{BARC}", "\u001d\u0068\u0070\u001d\u0077\u0003\u001d\u006b\u0049\u000c"); //Barcodes..
 
-            toPrint = toPrint.Replace("{TAB9}", "\u0009");// Inicia Subrayado doble Pg 12
-            toPrint = toPrint.Replace("{NLN}", "\n");// Cambio de linea
-            toPrint = toPrint.Replace("{NLN}", "\n");// Cambio de linea
+        //toPrint = toPrint.Replace("{TABH}","\u001b\u0044\u0002\u0010" + "\u0022\u0000");//Setting Horizontal Tab - Pg. 3-27
+        toPrint = toPrint.Replace("{TABH}", "\u001b\u0044\u0002\u0010\u0000");//Setting Horizontal Tab - Pg. 3-27
 
-            toPrint = toPrint.Replace("Ã¡", "\u00e1");
-            toPrint = toPrint.Replace("Ã©", "\u00e9");
-            toPrint = toPrint.Replace("Ã­", "\u00ed");
-            toPrint = toPrint.Replace("Ã³", "\u00f3");
-            toPrint = toPrint.Replace("Ãº", "\u00fa");
-            toPrint = toPrint.Replace("Ã±", "\u00f1");
-            toPrint = toPrint.Replace("Ã‘", "\u00d1");
-        
+        toPrint = toPrint.Replace("{TAB9}", "\u0009");// Inicia Subrayado doble Pg 12
+        toPrint = toPrint.Replace("{NLN}", "\n");// Cambio de linea
+        toPrint = toPrint.Replace("{NLN}", "\n");// Cambio de linea
+
+        toPrint = toPrint.Replace("Ã¡", "\u00e1");
+        toPrint = toPrint.Replace("Ã©", "\u00e9");
+        toPrint = toPrint.Replace("Ã­", "\u00ed");
+        toPrint = toPrint.Replace("Ã³", "\u00f3");
+        toPrint = toPrint.Replace("Ãº", "\u00fa");
+        toPrint = toPrint.Replace("Ã±", "\u00f1");
+        toPrint = toPrint.Replace("Ã‘", "\u00d1");
+
         return toPrint;
     }
 
