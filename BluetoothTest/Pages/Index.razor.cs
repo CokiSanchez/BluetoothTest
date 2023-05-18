@@ -242,7 +242,7 @@ public partial class Index : IDisposable
 
         try
         {
-            var lineas = Text.Split("{NLN}");
+            var lineas = Parte.Split("{NLN}");
 
             foreach (var linea in lineas)
             {
