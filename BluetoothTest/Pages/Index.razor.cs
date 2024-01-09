@@ -119,7 +119,7 @@ public partial class Index : IDisposable
     {
         try
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
+            Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 0000ffe0-0000-1000-8000-00805f9b34fb.");
 
             if (Device is null)
                 return;
@@ -127,21 +127,21 @@ public partial class Index : IDisposable
             if (!Device.Gatt.Connected)
                 return;
 
-            var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
+            var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
 
             if (service is null)
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Servicio 000018f0-0000-1000-8000-00805f9b34fb no detectado.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Servicio 0000ffe0-0000-1000-8000-00805f9b34fb no detectado.");
                 return;
             }
 
             Logs.Add($"{DateTime.Now:HH:mm} - Servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid} detectado.");
 
-            Characteristic = await service.GetCharacteristic("000018f0-0000-1000-8000-00805f9b34fb");
+            Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
             if (Characteristic is null)
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '000018f0-0000-1000-8000-00805f9b34fb' no encontrada.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
                 return;
             }
 
