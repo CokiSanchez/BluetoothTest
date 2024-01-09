@@ -31,7 +31,6 @@
         <div class="col-12 @(!Device?.Gatt.Connected ?? false ? "d-none" : "")">
             <button class="btn btn-primary m-2" @onclick="ComenzarServicios">Comenzar servicios</button>
             <button class="btn btn-primary m-2" @onclick="DetenerServicios">Detener servicios</button>
-            <button class="btn btn-primary m-2" @onclick="() => Logs.Clear()">Clear log</button>
         </div>
         <div class="col-12 @(Characteristic is null ? "d-none" : "")">
             <EditForm Model="Text" OnValidSubmit="Enviar">
@@ -59,6 +58,7 @@ else
 </div>
 <div class="row">
     <div class="col text-info">
+        <button class="btn btn-primary m-2" @onclick="() => Logs.Clear()">Clear log</button>
         <ul>
             @foreach (var log in Logs)
             {
