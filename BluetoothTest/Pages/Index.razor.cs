@@ -1,7 +1,5 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Text;
 
 namespace BluetoothTest.Pages;
@@ -18,7 +16,7 @@ public partial class Index : IDisposable
     private string Error { get; set; } = string.Empty;
     private string Text { get; set; } = string.Empty;
 
-    private string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} Citacion_Tipo {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: Citacion_IdNrPedido{NLN}{ESCa0}{TABH} Vitacura, Fecha/Hora:{TAB9}{ESCE0}Gen_Fecha Gen_Hora HRS.{NLN}{NLN}{ESCE1}{ESC-2}VEHICULO{ESC-0}{ESCE0}{NLN}{ESCE1}{ESCE0}Placa:{TAB9}Transito_Placa{NLN}Marca:{TAB9}Transito_Marca{NLN}Modelo:{TAB9}Transito_Modelo{NLN}Color:{TAB9}Transito_Color{NLN}Tipo Vehiculo:{TAB9}Transito_TipoVehiculo{NLN}{NLN}{ESCE1}{ESC-2}FISCALIZACION{ESC-0}{ESCE0}{NLN}Infraccion:{NLN}Citacion_Infracciones_Ind{NLN}- LUGAR:{TAB9}Transito_Lugar{NLN}- OBSERVACIONES:{NLN}{NLN}Citacion_Infracciones_Obs{NLN}{NLN}{ESCE1}{ESC-2}CITACION{ESC-0}{ESCE0}{NLN}CITO A UD AL Citacion_Juzgado, UBICADO EN {ESCE1}Citacion_DirJuzgado{ESCE0}.{NLN}PARA LA AUDENCIA DEL {ESCE1}Citacion_FechaCitacion A LAS {ESCE1}Citacion_HoraCitacion{ESCE0} HRS.{NLN}{NLN}SI EL DIA FIJADO  NO COMPARECIERE, SERA JUZGADO EN REBELDIA CONFORME A LA LEY.{NLN}{NLN}RECIBIDO POR: {TAB9}Citacion_Nombre{NLN}{NLN}-INSPECTOR:{TAB9}Gen_NombreInspector1{NLN}{NLN}Nº INTERNO: Citacion_NrNotif{NLN}";
+    private readonly string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} Citacion_Tipo {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: Citacion_IdNrPedido{NLN}{ESCa0}{TABH} Vitacura, Fecha/Hora:{TAB9}{ESCE0}Gen_Fecha Gen_Hora HRS.{NLN}{NLN}{ESCE1}{ESC-2}VEHICULO{ESC-0}{ESCE0}{NLN}{ESCE1}{ESCE0}Placa:{TAB9}Transito_Placa{NLN}Marca:{TAB9}Transito_Marca{NLN}Modelo:{TAB9}Transito_Modelo{NLN}Color:{TAB9}Transito_Color{NLN}Tipo Vehiculo:{TAB9}Transito_TipoVehiculo{NLN}{NLN}{ESCE1}{ESC-2}FISCALIZACION{ESC-0}{ESCE0}{NLN}Infraccion:{NLN}Citacion_Infracciones_Ind{NLN}- LUGAR:{TAB9}Transito_Lugar{NLN}- OBSERVACIONES:{NLN}{NLN}Citacion_Infracciones_Obs{NLN}{NLN}{ESCE1}{ESC-2}CITACION{ESC-0}{ESCE0}{NLN}CITO A UD AL Citacion_Juzgado, UBICADO EN {ESCE1}Citacion_DirJuzgado{ESCE0}.{NLN}PARA LA AUDENCIA DEL {ESCE1}Citacion_FechaCitacion A LAS {ESCE1}Citacion_HoraCitacion{ESCE0} HRS.{NLN}{NLN}SI EL DIA FIJADO  NO COMPARECIERE, SERA JUZGADO EN REBELDIA CONFORME A LA LEY.{NLN}{NLN}RECIBIDO POR: {TAB9}Citacion_Nombre{NLN}{NLN}-INSPECTOR:{TAB9}Gen_NombreInspector1{NLN}{NLN}Nº INTERNO: Citacion_NrNotif{NLN}";
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,30 +54,35 @@ public partial class Index : IDisposable
 
         try
         {
+            var serviceId = "000018f0-0000-1000-8000-00805f9b34fb";
+            //var characteristicId = "0000ffe1-0000-1000-8000-00805f9b34fb";
+
+            var q = new RequestDeviceQuery();
+            q.Filters.Add(new Filter() { Services = { serviceId } });
+
             var filter = new Filter
             {
-                Name = Device?.Name ?? "RPP320-3016-B",
-                NamePrefix = Device?.Name ?? "---",
+                Name = "RPP320-3016-B",
                 Services = new List<object>
                 {
-                    "00001800-0000-1000-8000-00805f9b34fb",
-                    "0000180a-0000-1000-8000-00805f9b34fb",
+                    //"00001800-0000-1000-8000-00805f9b34fb",
+                    //"0000180a-0000-1000-8000-00805f9b34fb",
                     "000018f0-0000-1000-8000-00805f9b34fb",
-                    "0000ffe0-0000-1000-8000-00805f9b34fb",
+                    //"0000ffe0-0000-1000-8000-00805f9b34fb",
                 }
             };
 
             Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
             {
-                AcceptAllDevices = true,
-                //OptionalServices = new List<string>
-                //{
-                //    "00001800-0000-1000-8000-00805f9b34fb",
-                //    "0000180a-0000-1000-8000-00805f9b34fb",
-                //    "000018f0-0000-1000-8000-00805f9b34fb",
-                //    "0000ffe0-0000-1000-8000-00805f9b34fb",
-                //},
-                //Filters = new List<Filter> { filter },
+                //AcceptAllDevices = true,
+                OptionalServices = new List<string>
+                {
+                    //"00001800-0000-1000-8000-00805f9b34fb",
+                    //"0000180a-0000-1000-8000-00805f9b34fb",
+                    "000018f0-0000-1000-8000-00805f9b34fb",
+                    //"0000ffe0-0000-1000-8000-00805f9b34fb",
+                },
+                Filters = new List<Filter> { filter },
             });
 
             //Device = await BluetoothNavigator.RequestDevice(
@@ -145,7 +148,7 @@ public partial class Index : IDisposable
 
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 0000ffe0-0000-1000-8000-00805f9b34fb.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
 
         if (Device is null)
             return;
@@ -153,7 +156,7 @@ public partial class Index : IDisposable
         if (!Device.Gatt.Connected)
             return;
 
-        var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
+        var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
 
         Logs.Add($"{DateTime.Now:HH:mm} - Detectado servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid}.");
 
@@ -165,14 +168,7 @@ public partial class Index : IDisposable
             return;
         }
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");
-
-        Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-        {
-            Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {Encoding.Default.GetString(e.Value)}.");
-        };
-
-        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");     
     }
 
     private async Task DetenerServicios()
@@ -200,25 +196,12 @@ public partial class Index : IDisposable
     {
         if (Characteristic is null)
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '00002af1-0000-1000-8000-00805f9b34fb' no encontrada.");
+            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
             return;
         }
 
         try
         {
-            if (Text.Equals("66"))
-            {
-                var imageBytes = await GetImageBytes();
-                var chunks = imageBytes!.Chunk(512);
-
-                await Characteristic.WriteValueWithoutResponse(Formatear("{ESC@}"));
-
-                foreach (var chunk in chunks)
-                    await Characteristic.WriteValueWithoutResponse(chunk);
-
-                return;
-            }
-
             var lineas = string.IsNullOrEmpty(Text) ? Parte.Split("{NLN}") : Text.Split("{NLN}");
 
             foreach (var (linea, index) in lineas.Select((linea, index) => (linea, index)))
@@ -307,30 +290,6 @@ public partial class Index : IDisposable
         toPrint = toPrint.Replace("Ã‘", "\u00d1");
 
         return toPrint;
-    }
-
-    static async Task<byte[]?> GetImageBytes()
-    {
-        try
-        {
-            using HttpClient client = new();
-            // Descargar la imagen como un arreglo de bytes
-            var imageStream = await client.GetStreamAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPCfJrRZkNH1Kr6R8Chx3dmuUDw43-RkYPpTN6_KKb_3Q03CHPC7Yd3-UZBUhNEu_91Jo&usqp=CAU");
-
-            var image = Image.FromStream(imageStream);
-            var bitmap = new Bitmap(image);
-
-            using var ms = new MemoryStream();
-            bitmap.Save(ms, ImageFormat.Png);
-
-            return ms.ToArray();
-        }
-        catch (Exception ex)
-        {
-            // Manejar cualquier error en la descarga
-            Console.WriteLine($"Error en la descarga de la imagen: {ex.Message}");
-            return null;
-        }
     }
 
     public void Dispose()
