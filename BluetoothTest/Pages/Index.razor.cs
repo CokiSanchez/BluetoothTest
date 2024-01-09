@@ -59,31 +59,51 @@ public partial class Index : IDisposable
 
             Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
 
-            var filter = new Filter
+            var query = new RequestDeviceQuery
             {
-                Name = Device?.Name ?? "RPP320-3016-B",
-                NamePrefix = Device?.Name ?? "---",
-                Services = new List<object>
-                {
-                    //"00001800-0000-1000-8000-00805f9b34fb",
-                    "0000180a-0000-1000-8000-00805f9b34fb",
-                    "000018f0-0000-1000-8000-00805f9b34fb",
-                    //"0000ffe0-0000-1000-8000-00805f9b34fb",
-                }
+                AcceptAllDevices = false,
+                Filters = new List<Filter>
+                    {
+                        new() 
+                        {
+                            Name = "RPP320-3016-B",
+                            NamePrefix = null,
+                        }
+                    }
             };
 
-            Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
-            {
-                //AcceptAllDevices = true,
-                OptionalServices = new List<string>
-                {
-                    //"00001800-0000-1000-8000-00805f9b34fb",
-                    "0000180a-0000-1000-8000-00805f9b34fb",
-                    "000018f0-0000-1000-8000-00805f9b34fb",
-                    //"0000ffe0-0000-1000-8000-00805f9b34fb",
-                },
-                Filters = new List<Filter> { filter },
-            });
+            //query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
+            //query.OptionalServices.Add("0000180a-0000-1000-8000-00805f9b34fb");
+            //query.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
+            //query.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
+
+            Device = await BluetoothNavigator.RequestDevice(query);
+
+            //var filter = new Filter
+            //{
+            //    Name = Device?.Name ?? "RPP320-3016-B",
+            //    NamePrefix = Device?.Name ?? "---",
+            //    Services = new List<object>
+            //    {
+            //        //"00001800-0000-1000-8000-00805f9b34fb",
+            //        "0000180a-0000-1000-8000-00805f9b34fb",
+            //        "000018f0-0000-1000-8000-00805f9b34fb",
+            //        //"0000ffe0-0000-1000-8000-00805f9b34fb",
+            //    }
+            //};
+
+            //Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
+            //{
+            //    //AcceptAllDevices = true,
+            //    OptionalServices = new List<string>
+            //    {
+            //        //"00001800-0000-1000-8000-00805f9b34fb",
+            //        "0000180a-0000-1000-8000-00805f9b34fb",
+            //        "000018f0-0000-1000-8000-00805f9b34fb",
+            //        //"0000ffe0-0000-1000-8000-00805f9b34fb",
+            //    },
+            //    Filters = new List<Filter> { filter },
+            //});
         }
         catch (Exception e)
         {
