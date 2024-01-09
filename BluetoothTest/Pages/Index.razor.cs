@@ -207,7 +207,14 @@ public partial class Index : IDisposable
         {
             if (Text.Equals("66"))
             {
-                await Characteristic.WriteValueWithoutResponse(await GetImageBytes());
+                var imageBytes = await GetImageBytes();
+                var chunks = imageBytes!.Chunk(512);
+
+                await Characteristic.WriteValueWithoutResponse(Formatear("{ESC@}"));
+
+                foreach (var chunk in chunks)                
+                    await Characteristic.WriteValueWithoutResponse(chunk);
+
                 return;
             }
 
