@@ -1,6 +1,5 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Text;
 
 namespace BluetoothTest.Pages;
@@ -70,7 +69,7 @@ public partial class Index : IDisposable
 
             Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
             {
-                AcceptAllDevices = true,
+                //AcceptAllDevices = true,
                 OptionalServices = new List<string>
                 {
                     "00001800-0000-1000-8000-00805f9b34fb",
