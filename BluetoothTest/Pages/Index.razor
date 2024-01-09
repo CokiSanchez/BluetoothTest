@@ -58,7 +58,7 @@ else
 </div>
 <div class="row">
     <div class="col text-info">
-        <button class="btn btn-primary m-2" @onclick="() => Logs.Clear()">Clear log</button>
+        <button class="btn btn-primary m-2 @(Logs.Any() ? "" : "d-none")" @onclick="() => Logs.Clear()">Clear log</button>
         <ul>
             @foreach (var log in Logs)
             {

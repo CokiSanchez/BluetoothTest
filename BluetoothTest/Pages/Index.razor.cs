@@ -54,22 +54,17 @@ public partial class Index : IDisposable
 
         try
         {
-            //var serviceId = "000018f0-0000-1000-8000-00805f9b34fb";
-            //var characteristicId = "0000ffe1-0000-1000-8000-00805f9b34fb";
-
-            Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
-
             var query = new RequestDeviceQuery
             {
                 AcceptAllDevices = false,
                 Filters = new List<Filter>
+                {
+                    new()
                     {
-                        new() 
-                        {
-                            Name = "RPP320-3016-B",
-                            NamePrefix = null,
-                        }
+                        Name = "RPP320-3016-B",
+                        NamePrefix = null,
                     }
+                }
             };
 
             //query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
@@ -77,33 +72,9 @@ public partial class Index : IDisposable
             //query.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
             //query.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
 
+            Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
+
             Device = await BluetoothNavigator.RequestDevice(query);
-
-            //var filter = new Filter
-            //{
-            //    Name = Device?.Name ?? "RPP320-3016-B",
-            //    NamePrefix = Device?.Name ?? "---",
-            //    Services = new List<object>
-            //    {
-            //        //"00001800-0000-1000-8000-00805f9b34fb",
-            //        "0000180a-0000-1000-8000-00805f9b34fb",
-            //        "000018f0-0000-1000-8000-00805f9b34fb",
-            //        //"0000ffe0-0000-1000-8000-00805f9b34fb",
-            //    }
-            //};
-
-            //Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
-            //{
-            //    //AcceptAllDevices = true,
-            //    OptionalServices = new List<string>
-            //    {
-            //        //"00001800-0000-1000-8000-00805f9b34fb",
-            //        "0000180a-0000-1000-8000-00805f9b34fb",
-            //        "000018f0-0000-1000-8000-00805f9b34fb",
-            //        //"0000ffe0-0000-1000-8000-00805f9b34fb",
-            //    },
-            //    Filters = new List<Filter> { filter },
-            //});
         }
         catch (Exception e)
         {
@@ -135,54 +106,48 @@ public partial class Index : IDisposable
         }
         catch (Exception e)
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Error: {e.Message}.");
             Error = e.Message;
+            Logs.Add($"{DateTime.Now:HH:mm} - Error: {e.Message}.");
         }
     }
 
-    //private async Task BuscarServicios()
-    //{
-    //    if (Device is null)
-    //        return;
-
-    //    Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
-
-    //    try
-    //    {
-    //        var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
-    //        Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services?.Select(s => s.Uuid) ?? Array.Empty<string>())}.");
-    //    }
-    //    catch (Exception e)
-    //    {
-
-    //        Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
-    //        Error = e.Message;
-    //    }
-    //}
-
     private async Task ComenzarServicios()
     {
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
-
-        if (Device is null)
-            return;
-
-        if (!Device.Gatt.Connected)
-            return;
-
-        var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
-
-        Logs.Add($"{DateTime.Now:HH:mm} - Detectado servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid}.");
-
-        Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
-
-        if (Characteristic is null)
+        try
         {
-            Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
-            return;
-        }
+            Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para 000018f0-0000-1000-8000-00805f9b34fb.");
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");
+            if (Device is null)
+                return;
+
+            if (!Device.Gatt.Connected)
+                return;
+
+            var service = await Device.Gatt.GetPrimaryService("000018f0-0000-1000-8000-00805f9b34fb");
+
+            if (service is null)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Servicio 000018f0-0000-1000-8000-00805f9b34fb no detectado.");
+                return;
+            }
+
+            Logs.Add($"{DateTime.Now:HH:mm} - Servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid} detectado.");
+
+            Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+
+            if (Characteristic is null)
+            {
+                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+                return;
+            }
+
+            Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+            Logs.Add($"{DateTime.Now:HH:mm} - Error: {e.Message}.");
+        }
     }
 
     private async Task DetenerServicios()
