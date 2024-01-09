@@ -66,7 +66,7 @@ public partial class Index : IDisposable
                 Services = new List<object>
                 {
                     //"00001800-0000-1000-8000-00805f9b34fb",
-                    //"0000180a-0000-1000-8000-00805f9b34fb",
+                    "0000180a-0000-1000-8000-00805f9b34fb",
                     "000018f0-0000-1000-8000-00805f9b34fb",
                     //"0000ffe0-0000-1000-8000-00805f9b34fb",
                 }
@@ -78,7 +78,7 @@ public partial class Index : IDisposable
                 OptionalServices = new List<string>
                 {
                     //"00001800-0000-1000-8000-00805f9b34fb",
-                    //"0000180a-0000-1000-8000-00805f9b34fb",
+                    "0000180a-0000-1000-8000-00805f9b34fb",
                     "000018f0-0000-1000-8000-00805f9b34fb",
                     //"0000ffe0-0000-1000-8000-00805f9b34fb",
                 },
