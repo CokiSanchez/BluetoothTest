@@ -191,7 +191,7 @@ public partial class Index : IDisposable
             {
                 var chunk = Formatear($"{linea} {{NLN}} ");
 
-                Logs.Add($"{DateTime.Now:HH:mm} - [{index + 1 / lineas.Length}] Se envia a imprimir {chunk.Length} de tamaño");
+                Logs.Add($"{DateTime.Now:HH:mm} - [{index + 1}/{lineas.Length}] Se envia a imprimir {chunk.Length} de tamaño");
 
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
