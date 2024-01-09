@@ -1,5 +1,6 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Text;
 
 namespace BluetoothTest.Pages;
@@ -20,11 +21,6 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        var lineas = Parte.Split("{NLN}").ToList();
-
-        var lineasSalto = lineas.Select(l => l = $"{l} {{NLN}} ").ToList();
-
-
         if (BluetoothNavigator is null)
             return;
 
@@ -107,16 +103,13 @@ public partial class Index : IDisposable
             if (connect)
             {
                 await Device.Gatt.Connect();
+
                 Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} conectado.");
             }
             else
             {
-                //var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-                //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-
-                //await characteristic.StopNotifications();
-
                 await Device.Gatt.Disonnect();
+
                 Logs.Add($"{DateTime.Now:HH:mm} - Dispositivo {Device.Name} {Device.Id} desconectado.");
                 Device = null;
                 Logs.Clear();
@@ -129,25 +122,25 @@ public partial class Index : IDisposable
         }
     }
 
-    private async Task BuscarServicios()
-    {
-        if (Device is null)
-            return;
+    //private async Task BuscarServicios()
+    //{
+    //    if (Device is null)
+    //        return;
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
+    //    Logs.Add($"{DateTime.Now:HH:mm} - Buscando servicios para {Device.Gatt.DeviceUuid}.");
 
-        try
-        {
-            var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
-            Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services?.Select(s => s.Uuid) ?? Array.Empty<string>())}.");
-        }
-        catch (Exception e)
-        {
+    //    try
+    //    {
+    //        var services = await Device.Gatt.GetPrimaryServices(Device.Gatt.DeviceUuid);
+    //        Logs.Add($"{DateTime.Now:HH:mm} - Servicios encontrados {string.Join("-", services?.Select(s => s.Uuid) ?? Array.Empty<string>())}.");
+    //    }
+    //    catch (Exception e)
+    //    {
 
-            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
-            Error = e.Message;
-        }
-    }
+    //        Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+    //        Error = e.Message;
+    //    }
+    //}
 
     private async Task ComenzarServicios()
     {
@@ -161,7 +154,7 @@ public partial class Index : IDisposable
 
         var service = await Device.Gatt.GetPrimaryService("0000ffe0-0000-1000-8000-00805f9b34fb");
 
-        Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service.IsPrimary} {service.Uuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Detectado servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid}.");
 
         Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
@@ -171,24 +164,14 @@ public partial class Index : IDisposable
             return;
         }
 
-        Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {Characteristic.Value} {Characteristic.Uuid}.");
+        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");
 
         Characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
         {
             Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {Encoding.Default.GetString(e.Value)}.");
         };
 
-        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
-
-        try
-        {
-            //await Characteristic.StartNotifications();
-        }
-        catch (Exception e)
-        {
-            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
-            Error = e.Message;
-        }
+        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");    
     }
 
     private async Task DetenerServicios()
@@ -204,25 +187,6 @@ public partial class Index : IDisposable
         try
         {
             await Characteristic.StopNotifications();
-            //var service2 = await Device.Gatt.GetPrimaryService("0000180a-0000-1000-8000-00805f9b34fb");
-
-            //Logs.Add($"{DateTime.Now:HH:mm} - detectado servicio {service2.IsPrimary} {service2.Uuid}.");
-
-            //var characteristic2 = await service2.GetCharacteristic(service2.Uuid);
-
-            //Logs.Add($"{DateTime.Now:HH:mm} - detectado caracteristica {characteristic2.Value} {characteristic2.Uuid}.");
-
-
-            //var service = await Device.Gatt.GetPrimaryService(Device.Gatt.DeviceUuid);
-            //var characteristic = await service.GetCharacteristic(Device.Gatt.DeviceUuid);
-            //if (characteristic.Properties.Write)
-            //{
-            //    characteristic.OnRaiseCharacteristicValueChanged += (sender, e) =>
-            //    {
-
-            //    };
-            //    await characteristic.StopNotifications();
-            //}
         }
         catch (Exception e)
         {
@@ -239,21 +203,15 @@ public partial class Index : IDisposable
             return;
         }
 
-        //if (string.IsNullOrEmpty(Text))
-        //{
-        //    Logs.Add($"{DateTime.Now:HH:mm} - No se puede enviar.");
-        //    return;
-        //}
-
         try
         {
-            var lineas = Parte.Split("{NLN}");
+            var lineas = string.IsNullOrEmpty(Text) ? Parte.Split("{NLN}") : Text.Split("{NLN}");
 
-            foreach (var linea in lineas)
+            foreach (var (linea, index) in lineas.Select((linea, index) => (linea, index)))
             {
                 var chunk = Formatear($"{linea} {{NLN}} ");
 
-                Logs.Add($"{DateTime.Now:HH:mm} - Se envia a imprimir {chunk.Length} de tamaño");
+                Logs.Add($"{DateTime.Now:HH:mm} - [{index + 1 / lineas.Length}] Se envia a imprimir {chunk.Length} de tamaño");
 
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
@@ -264,17 +222,12 @@ public partial class Index : IDisposable
         }
     }
 
-    private byte[] Formatear(string text)
+    private static byte[] Formatear(string text)
     {
-        var texto = Encoding.ASCII.GetBytes(PrintDriver(text));
-
-        return texto;
-        //var chunks = texto.Chunk(256);
-
-        //return chunks;
+        return Encoding.ASCII.GetBytes(PrintDriver(text));
     }
 
-    private string PrintDriver(string toPrint)
+    private static string PrintDriver(string toPrint)
     {
 
         toPrint = toPrint.Replace("{ESC@}", "\u001b\u0040");//inicializa Impresora    	
