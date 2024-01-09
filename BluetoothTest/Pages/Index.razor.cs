@@ -76,6 +76,9 @@ public partial class Index : IDisposable
             Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
 
             Device = await BluetoothNavigator.RequestDevice(query);
+
+            if (Device is not null)            
+                Logs.Clear();            
         }
         catch (Exception e)
         {
@@ -134,11 +137,11 @@ public partial class Index : IDisposable
 
             Logs.Add($"{DateTime.Now:HH:mm} - Servicio {(service.IsPrimary ? "primario" : "")} {service.Uuid} detectado.");
 
-            Characteristic = await service.GetCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+            Characteristic = await service.GetCharacteristic("000018f0-0000-1000-8000-00805f9b34fb");
 
             if (Characteristic is null)
             {
-                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+                Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '000018f0-0000-1000-8000-00805f9b34fb' no encontrada.");
                 return;
             }
 
