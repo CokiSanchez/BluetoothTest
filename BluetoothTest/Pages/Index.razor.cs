@@ -1,4 +1,5 @@
-﻿using Blazor.Bluetooth;
+﻿using BluetoothTest.Shared.BluetoothService.Interfaces;
+using BluetoothTest.Shared.BluetoothService.Models;
 using Microsoft.AspNetCore.Components;
 using System.Text;
 
@@ -77,8 +78,8 @@ public partial class Index : IDisposable
 
             Device = await BluetoothNavigator.RequestDevice(query);
 
-            if (Device is not null)            
-                Logs.Clear();            
+            if (Device is not null)
+                Logs.Clear();
         }
         catch (Exception e)
         {
@@ -277,12 +278,6 @@ public partial class Index : IDisposable
 
     public void Dispose()
     {
-        if (Characteristic is not null)
-        {
-            Characteristic.OnRaiseCharacteristicValueChanged -= (sender, e) => { };
-            Characteristic.StopNotifications();
-        }
-
         Device?.Gatt.Disonnect();
 
         BluetoothNavigator = null;
