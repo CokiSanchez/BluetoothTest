@@ -64,7 +64,8 @@ public partial class Index : IDisposable
                         Name = "RPP320-3016-B",
                         NamePrefix = null,
                     }
-                }
+                },
+                OptionalServices = new()
             };
 
             query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
