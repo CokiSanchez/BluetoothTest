@@ -57,15 +57,15 @@ public partial class Index : IDisposable
         {
             var filter = new Filter
             {
-                Name = Device?.Name ?? "---",
+                Name = Device?.Name ?? "RPP320-3016-B",
                 NamePrefix = Device?.Name ?? "---",
-                //Services = new List<object>
-                //{
-                //    "00001800-0000-1000-8000-00805f9b34fb",
-                //    "0000180a-0000-1000-8000-00805f9b34fb",
-                //    "000018f0-0000-1000-8000-00805f9b34fb",
-                //    "0000ffe0-0000-1000-8000-00805f9b34fb",
-                //}
+                Services = new List<object>
+                {
+                    "00001800-0000-1000-8000-00805f9b34fb",
+                    "0000180a-0000-1000-8000-00805f9b34fb",
+                    "000018f0-0000-1000-8000-00805f9b34fb",
+                    "0000ffe0-0000-1000-8000-00805f9b34fb",
+                }
             };
 
             Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
@@ -78,7 +78,7 @@ public partial class Index : IDisposable
                     "000018f0-0000-1000-8000-00805f9b34fb",
                     "0000ffe0-0000-1000-8000-00805f9b34fb",
                 },
-                //Filters = new List<Filter> { filter },
+                Filters = new List<Filter> { filter },
             });
 
             //Device = await BluetoothNavigator.RequestDevice(
