@@ -29,9 +29,9 @@
             <label>Estado: @((Device?.Gatt.Connected ?? false) ? "Conectado" : "Desconectado")</label>
         </div>
         <div class="col-12 @(!Device?.Gatt.Connected ?? false ? "d-none" : "")">
-            @* <button class="btn btn-primary m-2" @onclick="BuscarServicios">Buscar servicios</button> *@
             <button class="btn btn-primary m-2" @onclick="ComenzarServicios">Comenzar servicios</button>
             <button class="btn btn-primary m-2" @onclick="DetenerServicios">Detener servicios</button>
+            <button class="btn btn-primary m-2" @onclick="() => Logs.Clear()">Clear log</button>
         </div>
         <div class="col-12 @(Characteristic is null ? "d-none" : "")">
             <EditForm Model="Text" OnValidSubmit="Enviar">

@@ -54,15 +54,15 @@ public partial class Index : IDisposable
 
         try
         {
-            var serviceId = "000018f0-0000-1000-8000-00805f9b34fb";
+            //var serviceId = "000018f0-0000-1000-8000-00805f9b34fb";
             //var characteristicId = "0000ffe1-0000-1000-8000-00805f9b34fb";
 
-            var q = new RequestDeviceQuery();
-            q.Filters.Add(new Filter() { Services = { serviceId } });
+            Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
 
             var filter = new Filter
             {
-                Name = "RPP320-3016-B",
+                Name = Device?.Name ?? "RPP320-3016-B",
+                NamePrefix = Device?.Name ?? "---",
                 Services = new List<object>
                 {
                     //"00001800-0000-1000-8000-00805f9b34fb",
@@ -84,12 +84,6 @@ public partial class Index : IDisposable
                 },
                 Filters = new List<Filter> { filter },
             });
-
-            //Device = await BluetoothNavigator.RequestDevice(
-            //new RequestDeviceQuery
-            //{
-            //    AcceptAllDevices = true
-            //});
         }
         catch (Exception e)
         {
@@ -168,7 +162,7 @@ public partial class Index : IDisposable
             return;
         }
 
-        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");     
+        Logs.Add($"{DateTime.Now:HH:mm} - Detectada caracteristica {Characteristic.Uuid}.");
     }
 
     private async Task DetenerServicios()
