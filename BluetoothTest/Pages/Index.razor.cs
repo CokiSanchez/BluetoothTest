@@ -67,10 +67,10 @@ public partial class Index : IDisposable
                 }
             };
 
-            //query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
-            //query.OptionalServices.Add("0000180a-0000-1000-8000-00805f9b34fb");
-            //query.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
-            //query.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
+            query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
+            query.OptionalServices.Add("0000180a-0000-1000-8000-00805f9b34fb");
+            query.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
+            query.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
 
             Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
 
