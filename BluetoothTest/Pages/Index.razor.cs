@@ -1,5 +1,7 @@
 ﻿using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 
 namespace BluetoothTest.Pages;
@@ -170,7 +172,7 @@ public partial class Index : IDisposable
             Logs.Add($"{DateTime.Now:HH:mm} - Captura evento {e.ServiceId} {e.CharacteristicId} {Encoding.Default.GetString(e.Value)}.");
         };
 
-        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");    
+        Logs.Add($"{DateTime.Now:HH:mm} - caracteristica {Characteristic.Uuid} suscribe evento.");
     }
 
     private async Task DetenerServicios()
@@ -211,7 +213,7 @@ public partial class Index : IDisposable
 
                 await Characteristic.WriteValueWithoutResponse(Formatear("{ESC@}"));
 
-                foreach (var chunk in chunks)                
+                foreach (var chunk in chunks)
                     await Characteristic.WriteValueWithoutResponse(chunk);
 
                 return;
@@ -313,8 +315,15 @@ public partial class Index : IDisposable
         {
             using HttpClient client = new();
             // Descargar la imagen como un arreglo de bytes
-            byte[] imageBytes = await client.GetByteArrayAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPCfJrRZkNH1Kr6R8Chx3dmuUDw43-RkYPpTN6_KKb_3Q03CHPC7Yd3-UZBUhNEu_91Jo&usqp=CAU");
-            return imageBytes;
+            var imageStream = await client.GetStreamAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPCfJrRZkNH1Kr6R8Chx3dmuUDw43-RkYPpTN6_KKb_3Q03CHPC7Yd3-UZBUhNEu_91Jo&usqp=CAU");
+
+            var image = Image.FromStream(imageStream);
+            var bitmap = new Bitmap(image);
+
+            using var ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Png);
+
+            return ms.ToArray();
         }
         catch (Exception ex)
         {
