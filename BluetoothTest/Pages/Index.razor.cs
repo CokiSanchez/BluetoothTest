@@ -71,15 +71,15 @@ public partial class Index : IDisposable
 
             Device = await BluetoothNavigator.RequestDevice(new RequestDeviceQuery
             {
-                //AcceptAllDevices = true,
-                OptionalServices = new List<string>
-                {
-                    "00001800-0000-1000-8000-00805f9b34fb",
-                    "0000180a-0000-1000-8000-00805f9b34fb",
-                    "000018f0-0000-1000-8000-00805f9b34fb",
-                    "0000ffe0-0000-1000-8000-00805f9b34fb",
-                },
-                Filters = new List<Filter> { filter },
+                AcceptAllDevices = true,
+                //OptionalServices = new List<string>
+                //{
+                //    "00001800-0000-1000-8000-00805f9b34fb",
+                //    "0000180a-0000-1000-8000-00805f9b34fb",
+                //    "000018f0-0000-1000-8000-00805f9b34fb",
+                //    "0000ffe0-0000-1000-8000-00805f9b34fb",
+                //},
+                //Filters = new List<Filter> { filter },
             });
 
             //Device = await BluetoothNavigator.RequestDevice(
