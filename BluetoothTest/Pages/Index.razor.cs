@@ -205,6 +205,12 @@ public partial class Index : IDisposable
 
         try
         {
+            if (Text.Equals("66"))
+            {
+                await Characteristic.WriteValueWithoutResponse(await GetImageBytes());
+                return;
+            }
+
             var lineas = string.IsNullOrEmpty(Text) ? Parte.Split("{NLN}") : Text.Split("{NLN}");
 
             foreach (var (linea, index) in lineas.Select((linea, index) => (linea, index)))
@@ -293,6 +299,23 @@ public partial class Index : IDisposable
         toPrint = toPrint.Replace("Ã‘", "\u00d1");
 
         return toPrint;
+    }
+
+    static async Task<byte[]?> GetImageBytes()
+    {
+        try
+        {
+            using HttpClient client = new();
+            // Descargar la imagen como un arreglo de bytes
+            byte[] imageBytes = await client.GetByteArrayAsync("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPCfJrRZkNH1Kr6R8Chx3dmuUDw43-RkYPpTN6_KKb_3Q03CHPC7Yd3-UZBUhNEu_91Jo&usqp=CAU");
+            return imageBytes;
+        }
+        catch (Exception ex)
+        {
+            // Manejar cualquier error en la descarga
+            Console.WriteLine($"Error en la descarga de la imagen: {ex.Message}");
+            return null;
+        }
     }
 
     public void Dispose()
