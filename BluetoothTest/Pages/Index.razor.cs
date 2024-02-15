@@ -232,7 +232,9 @@ public partial class Index : IDisposable
 
             await Characteristic.WriteValueWithoutResponse(imageMode);
             await Characteristic.WriteValueWithoutResponse(n);
-            await Characteristic.WriteValueWithoutResponse(data);
+
+            foreach (var item in data.Chunk(512))            
+                await Characteristic.WriteValueWithoutResponse(item);  
         }
         catch (Exception e)
         {
