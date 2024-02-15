@@ -1,4 +1,17 @@
-﻿window.ble = {};
+﻿function ObtenerDimensionesImagen(imagenUrl) {
+    return new Promise((resolve, reject) => {
+        var img = new Image();
+        img.onload = function () {
+            resolve([img.width, img.height]);
+        };
+        img.onerror = function () {
+            reject("Error al cargar la imagen");
+        };
+        img.src = imagenUrl;
+    });
+}
+
+window.ble = {};
 
 // Helpers
 

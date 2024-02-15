@@ -1,14 +1,16 @@
 ﻿using BluetoothTest.Shared.BluetoothService.Interfaces;
 using BluetoothTest.Shared.BluetoothService.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Text;
 
 namespace BluetoothTest.Pages;
 
 public partial class Index : IDisposable
 {
-    [Inject]
-    private IBluetoothNavigator? BluetoothNavigator { get; set; }
+    [Inject] public IJSRuntime JS { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IBluetoothNavigator? BluetoothNavigator { get; set; }
     private IDevice? Device { get; set; }
     private IBluetoothRemoteGATTCharacteristic? Characteristic { get; set; }
 
@@ -21,6 +23,8 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        //await PruebaImagen();
+
         if (BluetoothNavigator is null)
             return;
 
@@ -174,6 +178,104 @@ public partial class Index : IDisposable
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
             Error = e.Message;
         }
+    }
+
+    private async Task PruebaImagen()
+    {
+        //if (Characteristic is null)
+        //{
+        //    Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
+        //    return;
+        //}
+
+        var _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(NavigationManager.BaseUri)
+        };
+
+        var stream = await _httpClient.GetStreamAsync($"/img/cat.png");
+        var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        byte[] bytes = memoryStream.ToArray();
+
+        var dimension = await ObtenerDimensionesImagen();
+
+        var ancho = dimension.Item1;
+        var alto = dimension.Item2;
+
+        var n1 = ancho % 256;
+        var n2 = (int) Math.Floor((decimal) alto / 256);
+
+        var data = TransformarImagen(bytes, 33);
+
+        await Characteristic.WriteValueWithoutResponse(data);
+
+        //byte[] imageMode = { 0x1B, 0x2A, 33 };
+
+        //await Characteristic.WriteValueWithoutResponse(imageMode);
+
+    }
+
+    public byte[]? TransformarImagen(byte[] imageBytes, int maxWidth)
+    {
+        try
+        {
+            // Calcular el ancho y la altura de la imagen
+            int imageWidth = maxWidth;
+            int imageHeight = imageBytes.Length / (maxWidth / 8); // 1 byte por cada 8 píxeles
+
+            // Crear el arreglo de bytes para la imagen ESC/POS
+            byte[] escPosImage = new byte[8 + (imageWidth * imageHeight)];
+
+            // Encabezado de comando ESC/POS para imprimir imagen
+            escPosImage[0] = 0x1B; // ESC
+            escPosImage[1] = 0x2A; // '*'
+            escPosImage[2] = 0x00; // Subcomando
+            escPosImage[3] = 0x58; // 'X'
+            escPosImage[4] = (byte)(imageWidth % 256); // Ancho de la imagen (LSB)
+            escPosImage[5] = (byte)(imageWidth / 256); // Ancho de la imagen (MSB)
+            escPosImage[6] = (byte)(imageHeight % 256); // Altura de la imagen (LSB)
+            escPosImage[7] = (byte)(imageHeight / 256); // Altura de la imagen (MSB)
+
+            // Convertir la imagen a formato ESC/POS
+            int dataIndex = 8;
+            for (int i = 0; i < imageBytes.Length; i += (maxWidth / 8))
+            {
+                // Copiar los bytes de la imagen a la matriz ESC/POS
+                Array.Copy(imageBytes, i, escPosImage, dataIndex, Math.Min(maxWidth / 8, imageBytes.Length - i));
+                dataIndex += maxWidth / 8;
+            }
+
+            return escPosImage;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al convertir la imagen a ESC/POS: " + ex.Message);
+            return null;
+        }
+    }
+
+    private async Task<Tuple<int, int>> ObtenerDimensionesImagen()
+    {
+        var imagenUrl = $"{NavigationManager.BaseUri}img/cat.png";
+       return await ObtenerDimensionesImagenJavaScript(imagenUrl);
+    }
+
+    [JSInvokable]
+    public async Task<Tuple<int, int>> ObtenerDimensionesImagenJavaScript(string imageUrl)
+    {
+        var dimensiones = await JS.InvokeAsync<int[]>("ObtenerDimensionesImagen", imageUrl);
+
+        var ancho = 0;
+        var alto = 0;
+
+        if (dimensiones != null && dimensiones.Length == 2)
+        {
+            ancho = Convert.ToInt32(dimensiones[0]);
+            alto = Convert.ToInt32(dimensiones[1]);
+        }
+
+        return new Tuple<int, int>(ancho, alto);
     }
 
     private async Task Enviar()
