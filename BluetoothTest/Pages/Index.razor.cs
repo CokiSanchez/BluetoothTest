@@ -19,11 +19,11 @@ public partial class Index : IDisposable
     private string Error { get; set; } = string.Empty;
     private string Text { get; set; } = string.Empty;
 
-    private readonly string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} Citacion_Tipo {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: Citacion_IdNrPedido{NLN}{ESCa0}{TABH} Vitacura, Fecha/Hora:{TAB9}{ESCE0}Gen_Fecha Gen_Hora HRS.{NLN}{NLN}{ESCE1}{ESC-2}VEHICULO{ESC-0}{ESCE0}{NLN}{ESCE1}{ESCE0}Placa:{TAB9}Transito_Placa{NLN}Marca:{TAB9}Transito_Marca{NLN}Modelo:{TAB9}Transito_Modelo{NLN}Color:{TAB9}Transito_Color{NLN}Tipo Vehiculo:{TAB9}Transito_TipoVehiculo{NLN}{NLN}{ESCE1}{ESC-2}FISCALIZACION{ESC-0}{ESCE0}{NLN}Infraccion:{NLN}Citacion_Infracciones_Ind{NLN}- LUGAR:{TAB9}Transito_Lugar{NLN}- OBSERVACIONES:{NLN}{NLN}Citacion_Infracciones_Obs{NLN}{NLN}{ESCE1}{ESC-2}CITACION{ESC-0}{ESCE0}{NLN}CITO A UD AL Citacion_Juzgado, UBICADO EN {ESCE1}Citacion_DirJuzgado{ESCE0}.{NLN}PARA LA AUDENCIA DEL {ESCE1}Citacion_FechaCitacion A LAS {ESCE1}Citacion_HoraCitacion{ESCE0} HRS.{NLN}{NLN}SI EL DIA FIJADO  NO COMPARECIERE, SERA JUZGADO EN REBELDIA CONFORME A LA LEY.{NLN}{NLN}RECIBIDO POR: {TAB9}Citacion_Nombre{NLN}{NLN}-INSPECTOR:{TAB9}Gen_NombreInspector1{NLN}{NLN}Nº INTERNO: Citacion_NrNotif{NLN}";
+    private readonly string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRE ñññññ hólá MUNICIPALIDAD DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} Citacion_Tipo {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: Citacion_IdNrPedido{NLN}{ESCa0}{TABH} Vitacura, Fecha/Hora:{TAB9}{ESCE0}Gen_Fecha Gen_Hora HRS.{NLN}{NLN}{ESCE1}{ESC-2}VEHICULO{ESC-0}{ESCE0}{NLN}{ESCE1}{ESCE0}Placa:{TAB9}Transito_Placa{NLN}Marca:{TAB9}Transito_Marca{NLN}Modelo:{TAB9}Transito_Modelo{NLN}Color:{TAB9}Transito_Color{NLN}Tipo Vehiculo:{TAB9}Transito_TipoVehiculo{NLN}{NLN}{ESCE1}{ESC-2}FISCALIZACION{ESC-0}{ESCE0}{NLN}Infraccion:{NLN}Citacion_Infracciones_Ind{NLN}- LUGAR:{TAB9}Transito_Lugar{NLN}- OBSERVACIONES:{NLN}{NLN}Citacion_Infracciones_Obs{NLN}{NLN}{ESCE1}{ESC-2}CITACION{ESC-0}{ESCE0}{NLN}CITO A UD AL Citacion_Juzgado, UBICADO EN {ESCE1}Citacion_DirJuzgado{ESCE0}.{NLN}PARA LA AUDENCIA DEL {ESCE1}Citacion_FechaCitacion A LAS {ESCE1}Citacion_HoraCitacion{ESCE0} HRS.{NLN}{NLN}SI EL DIA FIJADO  NO COMPARECIERE, SERA JUZGADO EN REBELDIA CONFORME A LA LEY.{NLN}{NLN}RECIBIDO POR: {TAB9}Citacion_Nombre{NLN}{NLN}-INSPECTOR:{TAB9}Gen_NombreInspector1{NLN}{NLN}Nº INTERNO: Citacion_NrNotif{NLN}";
 
     protected override async Task OnInitializedAsync()
     {
-        //await PruebaImagen();
+        //await PruebaImagen2();
 
         if (BluetoothNavigator is null)
             return;
@@ -180,40 +180,76 @@ public partial class Index : IDisposable
         }
     }
 
-    private async Task PruebaImagen()
+    private async Task PruebaImagen1()
     {
-        //if (Characteristic is null)
-        //{
-        //    Logs.Add($"{DateTime.Now:HH:mm} - Caracteristica '0000ffe1-0000-1000-8000-00805f9b34fb' no encontrada.");
-        //    return;
-        //}
-
-        var _httpClient = new HttpClient
+        try
         {
-            BaseAddress = new Uri(NavigationManager.BaseUri)
-        };
+            var _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(NavigationManager.BaseUri)
+            };
 
-        var stream = await _httpClient.GetStreamAsync($"/img/cat.png");
-        var memoryStream = new MemoryStream();
-        await stream.CopyToAsync(memoryStream);
-        byte[] bytes = memoryStream.ToArray();
+            var stream = await _httpClient.GetStreamAsync($"/img/cat.png");
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
 
-        var dimension = await ObtenerDimensionesImagen();
+            var data = TransformarImagen(bytes, 100);
 
-        var ancho = dimension.Item1;
-        var alto = dimension.Item2;
+            await Characteristic.WriteValueWithoutResponse(data);
+        }
+        catch (Exception e)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+        }
+    }
 
-        var n1 = ancho % 256;
-        var n2 = (int) Math.Floor((decimal) alto / 256);
+    private async Task PruebaImagen2()
+    {
+        try
+        {
+            var _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(NavigationManager.BaseUri)
+            };
 
-        var data = TransformarImagen(bytes, 33);
+            var stream = await _httpClient.GetStreamAsync($"/img/cat.png");
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
 
-        await Characteristic.WriteValueWithoutResponse(data);
+            var dimension = await ObtenerDimensionesImagen();
 
-        //byte[] imageMode = { 0x1B, 0x2A, 33 };
+            var ancho = dimension.Item1;
+            var alto = dimension.Item2;
 
-        //await Characteristic.WriteValueWithoutResponse(imageMode);
+            var n1 = Convert.ToByte((ancho % 256).ToString("X"));
+            var n2 = Convert.ToByte(((int)Math.Floor((decimal)alto / 256)).ToString("X"));
 
+            byte[] imageMode = { 0x1B, 0x2A, 33 };
+            byte[] n = { n1, n2 };
+            var data = ConvertirImagenAHex(bytes);
+
+            await Characteristic.WriteValueWithoutResponse(imageMode);
+            await Characteristic.WriteValueWithoutResponse(n);
+            await Characteristic.WriteValueWithoutResponse(n);
+        }
+        catch (Exception e)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+        }
+    }
+
+    public static string[] ConvertirImagenAHex(byte[] imagenBytes)
+    {
+        string[] hexColumnas = new string[imagenBytes.Length];
+
+        for (int i = 0; i < imagenBytes.Length; i++)
+        {
+            hexColumnas[i] = imagenBytes[i].ToString("X2");
+        }
+
+        return hexColumnas;
     }
 
     public byte[]? TransformarImagen(byte[] imageBytes, int maxWidth)
@@ -258,7 +294,7 @@ public partial class Index : IDisposable
     private async Task<Tuple<int, int>> ObtenerDimensionesImagen()
     {
         var imagenUrl = $"{NavigationManager.BaseUri}img/cat.png";
-       return await ObtenerDimensionesImagenJavaScript(imagenUrl);
+        return await ObtenerDimensionesImagenJavaScript(imagenUrl);
     }
 
     [JSInvokable]
@@ -376,6 +412,32 @@ public partial class Index : IDisposable
         toPrint = toPrint.Replace("Ã‘", "\u00d1");
 
         return toPrint;
+    }
+
+    public struct Hexadecimal
+    {
+        private readonly int value;
+
+        public Hexadecimal(int value)
+        {
+            this.value = value;
+        }
+
+        public readonly string ToHexString()
+        {
+            string hex = "";
+            int remainder;
+            int quotient = value;
+
+            do
+            {
+                remainder = quotient % 16;
+                quotient /= 16;
+                hex = (remainder < 10 ? (char)(remainder + '0') : (char)(remainder - 10 + 'A')) + hex;
+            } while (quotient != 0);
+
+            return hex;
+        }
     }
 
     public void Dispose()
