@@ -222,24 +222,34 @@ public partial class Index : IDisposable
 
             var ancho = dimension.Item1;
             var alto = dimension.Item2;
-
-            var x = (ancho % 256).ToString("X").ToString();
-            var x2 = Convert.ToByte(x);
-            var n1 = Convert.ToByte((ancho % 256).ToString("X"));
-            var n2 = Convert.ToByte(((int)Math.Floor((decimal)alto / 256)).ToString("X"));
+  
+            var n1 = (ancho % 256).ToString("X");
+            var n2 = ((int)Math.Floor((decimal)alto / 256)).ToString("X");
 
             byte[] imageMode = { 0x1B, 0x2A, 33 };
-            byte[] n = { n1, n2 };
-            var data = ConvertirImagenAHex(bytes);
+            byte[] n = { 0x5A, 0x0 };
+            var data = ConvertirHexABytes(ConvertirImagenAHex(bytes));
 
             await Characteristic.WriteValueWithoutResponse(imageMode);
             await Characteristic.WriteValueWithoutResponse(n);
-            await Characteristic.WriteValueWithoutResponse(n);
+            await Characteristic.WriteValueWithoutResponse(data);
         }
         catch (Exception e)
         {
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
         }
+    }
+
+    public static byte[] ConvertirHexABytes(string[] hexStrings)
+    {
+        List<byte> bytes = new List<byte>();
+
+        foreach (string hexString in hexStrings)
+        {
+            bytes.Add(Convert.ToByte(hexString, 16));
+        }
+
+        return bytes.ToArray();
     }
 
     public static string[] ConvertirImagenAHex(byte[] imagenBytes)
