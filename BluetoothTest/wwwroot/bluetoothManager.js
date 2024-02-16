@@ -1,4 +1,4 @@
-﻿function ObtenerDimensionesImagen(imagenUrl) {
+﻿function ObtenerDimensionesImagen(imageUrl) {
     return new Promise((resolve, reject) => {
         var img = new Image();
         img.onload = function () {
@@ -7,9 +7,66 @@
         img.onerror = function () {
             reject("Error al cargar la imagen");
         };
-        img.src = imagenUrl;
+        img.src = imageUrl;
     });
 }
+
+function convertImageToESCPOS(imageUrl) {
+
+    return new Promise((resolve, reject) => {
+        var img = new Image();
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0);
+
+            // Convertir la imagen a un formato de píxeles para ESC/POS
+            const escPosData = convertImageToESCPOSPixels(canvas);
+
+            // Aquí puedes enviar los datos ESC/POS a tu impresora
+            console.log(escPosData);
+
+            resolve(escPosData);
+        };
+        img.onerror = function () {
+            reject("Error al cargar la imagen");
+        };
+        img.src = imageUrl;
+    });   
+}
+
+function convertImageToESCPOSPixels(canvas) {
+    // Obtener el contexto del canvas
+    const context = canvas.getContext('2d');
+
+    // Obtener los datos de la imagen en formato de píxeles
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+
+    // Crear un arreglo para almacenar los datos de píxeles para ESC/POS
+    const escPosData = [];
+
+    // Escalar la imagen si es necesario (por ejemplo, ajustar el tamaño para que quepa en el papel de la impresora)
+    // Aquí puedes agregar la lógica de escalamiento
+
+    // Convertir la imagen a blanco y negro
+    for (let i = 0; i < pixels.length; i += 4) {
+        // Calcular el valor de gris promedio para cada píxel (RGB -> Escala de grises)
+        const grayValue = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+
+        // Convertir el valor de gris a blanco o negro (0 para negro, 255 para blanco)
+        const binaryValue = grayValue < 128 ? 0 : 255;
+
+        // Agregar el valor binario al arreglo de datos de ESC/POS
+        escPosData.push(binaryValue);
+    }
+
+    // Devolver los datos de la imagen en formato de píxeles para ESC/POS
+    return escPosData;
+}
+
 
 window.ble = {};
 
