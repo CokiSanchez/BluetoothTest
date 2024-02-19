@@ -25,7 +25,7 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        await PruebaImagen3();
+        //await PruebaImagen3();
 
         if (BluetoothNavigator is null)
             return;
