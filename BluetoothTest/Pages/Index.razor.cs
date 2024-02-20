@@ -196,7 +196,7 @@ public partial class Index : IDisposable
             byte[] bytes = memoryStream.ToArray();
 
             byte[] imageMode = { 0x1B, 0x2A, 33 };
-            var ancho = (await ObtenerAncho()).Ancho;
+            var ancho = (await ObtenerDimension()).Ancho;
 
             var n1 = ancho % 256;
             var n2 = Math.Floor((decimal)ancho / 256);
@@ -216,28 +216,54 @@ public partial class Index : IDisposable
 
     private async Task PruebaImagen2()
     {
-        string printCommands = "SIZE 50 mm, 30 mm\nTEXT 100,100,\"3\",0,1,1,\"Hello, World!\"\nPRINT";
-        var data = Encoding.ASCII.GetBytes(printCommands);
+        var _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(NavigationManager.BaseUri)
+        };
+
+        var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
+        var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        byte[] bytes = memoryStream.ToArray();
+
+        var dimension = await ObtenerDimension();
+
+        var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
         await Characteristic.WriteValueWithoutResponse(data);
 
-        //var text = Encoding.ASCII.GetBytes("\u001b\u002a\u0021\u0002\u0000\u00ff\u0000\u00ff\u0000\u00ff\u0000");
-        //await Characteristic.WriteValueWithoutResponse(text);
-        //var init = Encoding.ASCII.GetBytes("\u001b\u002a");
-        //await Characteristic.WriteValueWithoutResponse(init);
 
-        //var d = Encoding.ASCII.GetBytes("\u0021");
-        //await Characteristic.WriteValueWithoutResponse(d);
+    }
 
-        //var n = Encoding.ASCII.GetBytes("\u0002\u0000");
-        //await Characteristic.WriteValueWithoutResponse(n);
+    public byte[] GenerateImageCommands(byte[] imageData, int width, int height)
+    {
+        var commands = new List<byte>();
 
-        //var data = Encoding.ASCII.GetBytes("\u00ff\u0000\u00ff\u0000\u00ff\u0000");
-        //await Characteristic.WriteValueWithoutResponse(data);
+        // ESC * m nL nH d1...dk (Print raster bit image)
+        commands.Add(0x1B); // ESC
+        commands.Add(0x2A); // *
+        commands.Add(0x21); // m (value 0, 48 dot-density)
+        commands.Add((byte)(width / 8)); // nL (image width in bytes)
+        commands.Add((byte)(width / 8 >> 8)); // nH
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width / 8; j++)
+            {
+                byte data = 0x00;
+                for (int k = 0; k < 8; k++)
+                {
+                    int x = j * 8 + k;
+                    int y = i;
+                    int pixelIndex = y * width + x;
+                    if (pixelIndex < imageData.Length && imageData[pixelIndex] == 0xFF)
+                    {
+                        data |= (byte)(0x80 >> k);
+                    }
+                }
+                commands.Add(data);
+            }
+        }
 
-        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A });
-        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x21 });
-        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x02, 0x00 });
-        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
+        return commands.ToArray();
     }
 
     private async Task PruebaImagen3()
@@ -251,7 +277,7 @@ public partial class Index : IDisposable
 
             var data = Encoding.UTF8.GetBytes(jsonString);
 
-            var ancho = (await ObtenerAncho()).Ancho;
+            var ancho = (await ObtenerDimension()).Ancho;
 
             var n1 = BitConverter.GetBytes(ancho % 256);
             var n2 = BitConverter.GetBytes((int)Math.Floor((decimal)ancho / 256));
@@ -272,7 +298,7 @@ public partial class Index : IDisposable
     }
 
     [JSInvokable]
-    public async Task<(int Ancho, int Alto)> ObtenerAncho()
+    public async Task<(int Ancho, int Alto)> ObtenerDimension()
     {
         var imageUrl = $"{NavigationManager.BaseUri}img/prueba.png";
         var dimensiones = await JS.InvokeAsync<int[]>("ObtenerDimensionesImagen", imageUrl);
