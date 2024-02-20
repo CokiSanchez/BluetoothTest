@@ -251,7 +251,7 @@ public partial class Index : IDisposable
         //commands.Add((byte)(width / 8 >> 8)); // nH
 
         commands.Add((byte)0x0F); // 15 mod 256 = 15
-        commands.Add((byte)0x00); // 2/256 = 0
+        commands.Add((byte)0x00); // 15/256 = 0
 
         // H
         commands.Add((byte)0xFF);
@@ -317,6 +317,242 @@ public partial class Index : IDisposable
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
 
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0x0A);
+
+        //-------------------------
+        commands.Add(0x1B); // ESC
+        commands.Add(0x2A); // *
+        commands.Add(0x21); // m (value 0, 48 dot-density)
+        //commands.Add((byte)(width / 8)); // nL (image width in bytes)
+        //commands.Add((byte)(width / 8 >> 8)); // nH
+
+        commands.Add((byte)0x1E); // 30 mod 256 = 30
+        commands.Add((byte)0x00); // 30/256 = 0
+
+        // H
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        // O
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        // L
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
+        // A
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xF0);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xF0);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
         commands.Add((byte)0x00);
         commands.Add((byte)0x00);
         commands.Add((byte)0x00);
