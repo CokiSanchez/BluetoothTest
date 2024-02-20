@@ -231,7 +231,7 @@ public partial class Index : IDisposable
             var dimension = await ObtenerDimension();
 
             var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
-            await Characteristic.WriteValueWithoutResponse(data); 
+            await Characteristic.WriteValueWithoutResponse(data);
         }
         catch (Exception e)
         {
@@ -253,6 +253,7 @@ public partial class Index : IDisposable
         commands.Add((byte)0x03); // 15 mod 256 = 15
         commands.Add((byte)0x00); // 2/256 = 0
 
+        // H
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
@@ -260,6 +261,45 @@ public partial class Index : IDisposable
         commands.Add((byte)0x00);
         commands.Add((byte)0xFF);
         commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        // O
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        // L
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x0F);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x0F);
+
+        // A
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xF0);
 
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
