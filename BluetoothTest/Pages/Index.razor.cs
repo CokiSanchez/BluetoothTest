@@ -24,7 +24,7 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        //await PruebaImagen3();
+        await PruebaImagen2();
 
         if (BluetoothNavigator is null)
             return;
@@ -230,8 +230,6 @@ public partial class Index : IDisposable
 
         var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
         await Characteristic.WriteValueWithoutResponse(data);
-
-
     }
 
     public byte[] GenerateImageCommands(byte[] imageData, int width, int height)
