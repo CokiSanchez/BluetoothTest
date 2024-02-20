@@ -205,7 +205,7 @@ public partial class Index : IDisposable
             byte[][] matrix = Array.Empty<byte[]>();
 
             foreach (var b in bytes.Chunk(24))
-            { 
+            {
 
             }
         }
@@ -229,10 +229,10 @@ public partial class Index : IDisposable
 
             var jsonString = JsonSerializer.Serialize(escPosData);
 
-           var data = Encoding.UTF8.GetBytes(jsonString);
+            var data = Encoding.UTF8.GetBytes(jsonString);
 
-            await Characteristic.WriteValueWithoutResponse(data);
-
+            foreach (var chunk in data.Chunk(512))
+                await Characteristic.WriteValueWithoutResponse(data);
         }
         catch (Exception e)
         {
