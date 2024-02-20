@@ -216,19 +216,23 @@ public partial class Index : IDisposable
 
     private async Task PruebaImagen2()
     {
+        string printCommands = "SIZE 50 mm, 30 mm\nTEXT 100,100,\"3\",0,1,1,\"Hello, World!\"\nPRINT";
+        var data = Encoding.ASCII.GetBytes(printCommands);
+        await Characteristic.WriteValueWithoutResponse(data);
+
         //var text = Encoding.ASCII.GetBytes("\u001b\u002a\u0021\u0002\u0000\u00ff\u0000\u00ff\u0000\u00ff\u0000");
         //await Characteristic.WriteValueWithoutResponse(text);
-        var init = Encoding.ASCII.GetBytes("\u001b\u002a");
-        await Characteristic.WriteValueWithoutResponse(init);
+        //var init = Encoding.ASCII.GetBytes("\u001b\u002a");
+        //await Characteristic.WriteValueWithoutResponse(init);
 
-        var d = Encoding.ASCII.GetBytes("\u0021");
-        await Characteristic.WriteValueWithoutResponse(d);
+        //var d = Encoding.ASCII.GetBytes("\u0021");
+        //await Characteristic.WriteValueWithoutResponse(d);
 
-        var n = Encoding.ASCII.GetBytes("\u0002\u0000");
-        await Characteristic.WriteValueWithoutResponse(n);
+        //var n = Encoding.ASCII.GetBytes("\u0002\u0000");
+        //await Characteristic.WriteValueWithoutResponse(n);
 
-        var data = Encoding.ASCII.GetBytes("\u00ff\u0000\u00ff\u00ff\u0000\u00ff");
-        await Characteristic.WriteValueWithoutResponse(data);
+        //var data = Encoding.ASCII.GetBytes("\u00ff\u0000\u00ff\u0000\u00ff\u0000");
+        //await Characteristic.WriteValueWithoutResponse(data);
 
         //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A });
         //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x21 });
