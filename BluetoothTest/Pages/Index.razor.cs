@@ -2,7 +2,6 @@
 using BluetoothTest.Shared.BluetoothService.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Drawing;
 using System.Text;
 using System.Text.Json;
 
@@ -197,7 +196,7 @@ public partial class Index : IDisposable
             byte[] bytes = memoryStream.ToArray();
 
             byte[] imageMode = { 0x1B, 0x2A, 33 };
-            var ancho = await ObtenerAncho();
+            var ancho = (await ObtenerAncho()).Ancho;
 
             var n1 = ancho % 256;
             var n2 = Math.Floor((decimal)ancho / 256);
@@ -231,9 +230,17 @@ public partial class Index : IDisposable
 
             var data = Encoding.UTF8.GetBytes(jsonString);
 
-            await Characteristic.WriteValueWithoutResponse(new byte[]{ 0x1B, 0x2A, 33});
+            var ancho = (await ObtenerAncho()).Ancho;
 
-            foreach (var chunk in data.Chunk(512))
+            var n1 = BitConverter.GetBytes(ancho % 256);
+            var n2 = BitConverter.GetBytes((int)Math.Floor((decimal)ancho / 256));
+
+            //await Characteristic.WriteValueWithoutResponse(new byte[]{ 0x1B, 0x2A, 33});
+            await Characteristic.WriteValueWithoutResponse(new byte[]{ 27, 42, 33});
+            await Characteristic.WriteValueWithoutResponse(n1);
+            await Characteristic.WriteValueWithoutResponse(n2);
+
+            foreach (var chunk in data.Chunk(24))
                 await Characteristic.WriteValueWithoutResponse(chunk);
         }
         catch (Exception e)
@@ -241,12 +248,9 @@ public partial class Index : IDisposable
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
         }
     }
-
-    private async Task<int> ObtenerAncho()
-        => (await ObtenerDimensionesImagenJavaScript()).ancho;
-
+ 
     [JSInvokable]
-    public async Task<(int ancho, int alto)> ObtenerDimensionesImagenJavaScript()
+    public async Task<(int Ancho, int Alto)> ObtenerAncho()
     {
         var imageUrl = $"{NavigationManager.BaseUri}img/prueba.png";
         var dimensiones = await JS.InvokeAsync<int[]>("ObtenerDimensionesImagen", imageUrl);
