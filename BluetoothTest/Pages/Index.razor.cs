@@ -232,7 +232,7 @@ public partial class Index : IDisposable
             var data = Encoding.UTF8.GetBytes(jsonString);
 
             foreach (var chunk in data.Chunk(512))
-                await Characteristic.WriteValueWithoutResponse(data);
+                await Characteristic.WriteValueWithoutResponse(chunk);
         }
         catch (Exception e)
         {
