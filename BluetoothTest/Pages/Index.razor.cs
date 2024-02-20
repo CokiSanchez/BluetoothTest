@@ -240,8 +240,11 @@ public partial class Index : IDisposable
         commands.Add(0x1B); // ESC
         commands.Add(0x2A); // *
         commands.Add(0x21); // m (value 0, 48 dot-density)
-        commands.Add((byte)(width / 8)); // nL (image width in bytes)
-        commands.Add((byte)(width / 8 >> 8)); // nH
+        //commands.Add((byte)(width / 8)); // nL (image width in bytes)
+        //commands.Add((byte)(width / 8 >> 8)); // nH
+
+        commands.Add((byte)0x02);
+        commands.Add((byte)0x00);
 
         commands.Add((byte)0xFF);
         commands.Add((byte)0x00);
