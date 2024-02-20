@@ -250,7 +250,7 @@ public partial class Index : IDisposable
         //commands.Add((byte)(width / 8)); // nL (image width in bytes)
         //commands.Add((byte)(width / 8 >> 8)); // nH
 
-        commands.Add((byte)0x03); // 15 mod 256 = 15
+        commands.Add((byte)0x0F); // 15 mod 256 = 15
         commands.Add((byte)0x00); // 2/256 = 0
 
         // H
