@@ -172,7 +172,7 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        //await PruebaImagen2();
+        await PruebaImagen2();
 
         if (BluetoothNavigator is null)
             return;
@@ -250,19 +250,11 @@ public partial class Index : IDisposable
         //commands.Add((byte)(width / 8)); // nL (image width in bytes)
         //commands.Add((byte)(width / 8 >> 8)); // nH
 
-        commands.Add((byte)0x02);
-        commands.Add((byte)0x00);
+        commands.Add((byte)0x03); // 15 mod 256 = 15
+        commands.Add((byte)0x00); // 2/256 = 0
 
         commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
         commands.Add((byte)0xFF);
-
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
         commands.Add((byte)0xFF);
 
         commands.Add((byte)0x00);
@@ -270,31 +262,10 @@ public partial class Index : IDisposable
         commands.Add((byte)0x00);
 
         commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
 
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-
-        commands.Add((byte)0x00);
-        commands.Add((byte)0xFF);
-        commands.Add((byte)0x00);
-
-        commands.Add((byte)0x1B);
-        commands.Add((byte)0x64);
+        commands.Add((byte)0x0A);
 
         //for (int i = 0; i < height; i++)
         //{
