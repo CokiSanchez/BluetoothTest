@@ -216,7 +216,7 @@ public partial class Index : IDisposable
 
     private async Task PruebaImagen2()
     {
-        var text = Encoding.ASCII.GetBytes("\u001b\u002a\u0021\u0002\u0000\u00ff\u0000\u00ff\u0000\u00ff\u0000");
+        var text = Encoding.ASCII.GetBytes("\u001b\u0040\u001b\u002a\u0021\u0002\u0000\u00ff\u0000\u00ff\u0000\u00ff\u0000");
         //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
         await Characteristic.WriteValueWithoutResponse(text);
     }
