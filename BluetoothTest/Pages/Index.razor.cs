@@ -266,6 +266,10 @@ public partial class Index : IDisposable
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
 
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
         // O
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
@@ -278,6 +282,10 @@ public partial class Index : IDisposable
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
 
         // L
         commands.Add((byte)0xFF);
@@ -292,6 +300,10 @@ public partial class Index : IDisposable
         commands.Add((byte)0x00);
         commands.Add((byte)0x0F);
 
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+
         // A
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
@@ -304,6 +316,10 @@ public partial class Index : IDisposable
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0x00);
 
         commands.Add((byte)0x0A);
 
