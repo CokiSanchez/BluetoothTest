@@ -216,7 +216,7 @@ public partial class Index : IDisposable
 
     private async Task PruebaImagen2()
     {
-
+        await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
     }
 
     private async Task PruebaImagen3()
