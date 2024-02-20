@@ -218,10 +218,22 @@ public partial class Index : IDisposable
     {
         //var text = Encoding.ASCII.GetBytes("\u001b\u002a\u0021\u0002\u0000\u00ff\u0000\u00ff\u0000\u00ff\u0000");
         //await Characteristic.WriteValueWithoutResponse(text);
-        await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A });
-        await Characteristic.WriteValueWithoutResponse(new byte[] { 0x21 });
-        await Characteristic.WriteValueWithoutResponse(new byte[] { 0x02, 0x00 });
-        await Characteristic.WriteValueWithoutResponse(new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
+        var init = Encoding.ASCII.GetBytes("\u001b\u002a");
+        await Characteristic.WriteValueWithoutResponse(init);
+
+        var d = Encoding.ASCII.GetBytes("\u0021");
+        await Characteristic.WriteValueWithoutResponse(d);
+
+        var n = Encoding.ASCII.GetBytes("\u0002\u0000");
+        await Characteristic.WriteValueWithoutResponse(n);
+
+        var data = Encoding.ASCII.GetBytes("\u00ff\u0000\u00ff\u00ff\u0000\u00ff");
+        await Characteristic.WriteValueWithoutResponse(data);
+
+        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A });
+        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x21 });
+        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x02, 0x00 });
+        //await Characteristic.WriteValueWithoutResponse(new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
     }
 
     private async Task PruebaImagen3()
@@ -244,10 +256,10 @@ public partial class Index : IDisposable
             //await Characteristic.WriteValueWithoutResponse(new byte[]{ 27, 42, 33});
             //await Characteristic.WriteValueWithoutResponse(n1);
             //await Characteristic.WriteValueWithoutResponse(n2);
-            await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
+            //await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 });
 
-            //foreach (var chunk in data.Chunk(24))
-            //    await Characteristic.WriteValueWithoutResponse(chunk);
+            foreach (var chunk in data.Chunk(24))
+                await Characteristic.WriteValueWithoutResponse(chunk);
         }
         catch (Exception e)
         {
