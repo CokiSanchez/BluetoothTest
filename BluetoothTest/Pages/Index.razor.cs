@@ -231,16 +231,7 @@ public partial class Index : IDisposable
             var dimension = await ObtenerDimension();
 
             var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
-            var tamaño = data.Length;
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
-            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data); 
         }
         catch (Exception e)
         {
@@ -269,6 +260,41 @@ public partial class Index : IDisposable
         commands.Add((byte)0x00);
         commands.Add((byte)0xFF);
         commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+
+        commands.Add((byte)0x1B);
+        commands.Add((byte)0x64);
 
         //for (int i = 0; i < height; i++)
         //{
