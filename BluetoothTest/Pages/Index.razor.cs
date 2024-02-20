@@ -242,24 +242,33 @@ public partial class Index : IDisposable
         commands.Add(0x21); // m (value 0, 48 dot-density)
         commands.Add((byte)(width / 8)); // nL (image width in bytes)
         commands.Add((byte)(width / 8 >> 8)); // nH
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width / 8; j++)
-            {
-                byte data = 0x00;
-                for (int k = 0; k < 8; k++)
-                {
-                    int x = j * 8 + k;
-                    int y = i;
-                    int pixelIndex = y * width + x;
-                    if (pixelIndex < imageData.Length && imageData[pixelIndex] == 0xFF)
-                    {
-                        data |= (byte)(0x80 >> k);
-                    }
-                }
-                commands.Add(data);
-            }
-        }
+
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+
+        commands.Add((byte)0x00);
+        commands.Add((byte)0xFF);
+        commands.Add((byte)0x00);
+
+        //for (int i = 0; i < height; i++)
+        //{
+        //    for (int j = 0; j < width / 8; j++)
+        //    {
+        //        byte data = 0x00;
+        //        for (int k = 0; k < 8; k++)
+        //        {
+        //            int x = j * 8 + k;
+        //            int y = i;
+        //            int pixelIndex = y * width + x;
+        //            if (pixelIndex < imageData.Length && imageData[pixelIndex] == 0xFF)
+        //            {
+        //                data |= (byte)(0x80 >> k);
+        //            }
+        //        }
+        //        commands.Add(data);
+        //    }
+        //}
 
         return commands.ToArray();
     }
