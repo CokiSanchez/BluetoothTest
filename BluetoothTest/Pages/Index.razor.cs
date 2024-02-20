@@ -231,6 +231,8 @@ public partial class Index : IDisposable
 
             var data = Encoding.UTF8.GetBytes(jsonString);
 
+            await Characteristic.WriteValueWithoutResponse(new byte[]{ 0x1B, 0x2A, 33});
+
             foreach (var chunk in data.Chunk(512))
                 await Characteristic.WriteValueWithoutResponse(chunk);
         }
