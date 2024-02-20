@@ -22,17 +22,6 @@ public partial class Index : IDisposable
 
     private readonly string Parte = "{ESC@}{ESCR7}{ESCE1}{ESCa0}{ESC-1}{ESCa1}{ESC-0} ILUSTRé  ñUNICIPALIDAD N° DE VITACURA {NLN} INSPECCION MUNICIPAL {NLN}{NLN}{GSB1} Citacion_Tipo {GSB0}{ESC-1}{ESCa2} {ESC-0}{NLN}{ESCa2} Nº Citacion: Citacion_IdNrPedido{NLN}{ESCa0}{TABH} Vitacura, Fecha/Hora:{TAB9}{ESCE0}Gen_Fecha Gen_Hora HRS.{NLN}{NLN}{ESCE1}{ESC-2}VEHICULO{ESC-0}{ESCE0}{NLN}{ESCE1}{ESCE0}Placa:{TAB9}Transito_Placa{NLN}Marca:{TAB9}Transito_Marca{NLN}Modelo:{TAB9}Transito_Modelo{NLN}Color:{TAB9}Transito_Color{NLN}Tipo Vehiculo:{TAB9}Transito_TipoVehiculo{NLN}{NLN}{ESCE1}{ESC-2}FISCALIZACION{ESC-0}{ESCE0}{NLN}Infraccion:{NLN}Citacion_Infracciones_Ind{NLN}- LUGAR:{TAB9}Transito_Lugar{NLN}- OBSERVACIONES:{NLN}{NLN}Citacion_Infracciones_Obs{NLN}{NLN}{ESCE1}{ESC-2}CITACION{ESC-0}{ESCE0}{NLN}CITO A UD AL Citacion_Juzgado, UBICADO EN {ESCE1}Citacion_DirJuzgado{ESCE0}.{NLN}PARA LA AUDENCIA DEL {ESCE1}Citacion_FechaCitacion A LAS {ESCE1}Citacion_HoraCitacion{ESCE0} HRS.{NLN}{NLN}SI EL DIA FIJADO  NO COMPARECIERE, SERA JUZGADO EN REBELDIA CONFORME A LA LEY.{NLN}{NLN}RECIBIDO POR: {TAB9}Citacion_Nombre{NLN}{NLN}-INSPECTOR:{TAB9}Gen_NombreInspector1{NLN}{NLN}Nº INTERNO: Citacion_NrNotif{NLN}";
 
-    protected override async Task OnInitializedAsync()
-    {
-        //await PruebaImagen2();
-
-        if (BluetoothNavigator is null)
-            return;
-
-        BluetoothNavigator.OnAvailabilityChanged += async () => await OnAvailabilityChanged();
-        await BuscarServicio();
-    }
-
     private async Task OnAvailabilityChanged()
     {
         await BuscarServicio();
@@ -181,6 +170,17 @@ public partial class Index : IDisposable
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        //await PruebaImagen2();
+
+        if (BluetoothNavigator is null)
+            return;
+
+        BluetoothNavigator.OnAvailabilityChanged += async () => await OnAvailabilityChanged();
+        await BuscarServicio();
+    }
+
     private async Task PruebaImagen1()
     {
         try
@@ -216,20 +216,36 @@ public partial class Index : IDisposable
 
     private async Task PruebaImagen2()
     {
-        var _httpClient = new HttpClient
+        try
         {
-            BaseAddress = new Uri(NavigationManager.BaseUri)
-        };
+            var _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(NavigationManager.BaseUri)
+            };
 
-        var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
-        var memoryStream = new MemoryStream();
-        await stream.CopyToAsync(memoryStream);
-        byte[] bytes = memoryStream.ToArray();
+            var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
 
-        var dimension = await ObtenerDimension();
+            var dimension = await ObtenerDimension();
 
-        var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
-        await Characteristic.WriteValueWithoutResponse(data);
+            var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
+            var tamaño = data.Length;
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+            await Characteristic.WriteValueWithoutResponse(data);
+        }
+        catch (Exception e)
+        {
+            Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+        }
     }
 
     public byte[] GenerateImageCommands(byte[] imageData, int width, int height)
