@@ -193,7 +193,7 @@ public partial class Index : IDisposable
             //var pixels = GetPixelValues(bytes, ancho);
 
             //var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(ancho % 256), (byte)Math.Floor((decimal)ancho / 256) };
-            var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(2 % 256), (byte)Math.Floor((decimal)2 / 256) };
+            //var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(2 % 256), (byte)Math.Floor((decimal)2 / 256) };
 
             //await Characteristic.WriteValueWithoutResponse(init);
 
