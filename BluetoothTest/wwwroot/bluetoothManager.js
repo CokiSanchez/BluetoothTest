@@ -1,4 +1,18 @@
-﻿function ObtenerDimensionesImagen(imageUrl) {
+﻿function cargarImagenComoBytes(urlImagen) {
+    return new Promise((resolve, reject) => {
+        fetch(urlImagen)
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                const byteArray = new Uint8Array(buffer);
+                resolve(byteArray);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+function ObtenerDimensionesImagen(imageUrl) {
     return new Promise((resolve, reject) => {
         var img = new Image();
         img.onload = function () {

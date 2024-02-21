@@ -181,7 +181,7 @@ public partial class Index : IDisposable
         await BuscarServicio();
     }
 
-    private const string Nombre = "prueba.png";
+    private const string Nombre = "min.png";
 
     private async Task PruebaImagen1()
     {
@@ -191,8 +191,9 @@ public partial class Index : IDisposable
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             //var pixels = GetPixelValues(bytes, ancho);
+            var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(ancho % 256), (byte)Math.Floor((decimal)ancho / 256) };
 
-            await Characteristic.WriteValueWithoutResponse(new byte[] { 0x1B, 0x21, (byte)(ancho / 8), (byte)(ancho / 8 >> 8) });
+            await Characteristic.WriteValueWithoutResponse(init);
 
             foreach (var chunk in bytes.Chunk(alto))
                 await Characteristic.WriteValueWithoutResponse(chunk);
@@ -205,6 +206,22 @@ public partial class Index : IDisposable
         catch (Exception e)
         {
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
+        }
+    }
+
+    public async Task<byte[]> CargarImagenComoBytes()
+    {
+        try
+        {
+            var imageUrl = $"{NavigationManager.BaseUri}img/{Nombre}";
+            var byteArray = await JS.InvokeAsync<byte[]>("cargarImagenComoBytes", imageUrl);
+            return byteArray;
+        }
+        catch (Exception ex)
+        {
+            // Manejar el error
+            Console.WriteLine($"Error al cargar la imagen: {ex.Message}");
+            return null;
         }
     }
 
