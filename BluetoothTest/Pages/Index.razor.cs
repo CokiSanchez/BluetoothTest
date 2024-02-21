@@ -181,7 +181,7 @@ public partial class Index : IDisposable
         await BuscarServicio();
     }
 
-    private const string Nombre = "prueba.png";
+    private const string Nombre = "logo.png";
     private readonly byte[] Init_Image_Mode = { 0x1B, 0x2A, 0x21, 0x01, 0x00 };
     private readonly byte[] New_Line = { 0x0A };
 
