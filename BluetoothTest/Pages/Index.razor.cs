@@ -181,7 +181,7 @@ public partial class Index : IDisposable
         await BuscarServicio();
     }
 
-    private const string Nombre = "min.png";
+    private const string Nombre = "cat.png";
 
     private async Task PruebaImagen1()
     {
