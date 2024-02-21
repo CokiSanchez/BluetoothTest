@@ -190,7 +190,7 @@ public partial class Index : IDisposable
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             var pixels = GetPixelValues(bytes, ancho);
 
-            await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
+            //await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
             await Characteristic.WriteValueWithoutResponse(pixels.ToArray());
         }
         catch (Exception e)
