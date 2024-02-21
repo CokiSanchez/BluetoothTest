@@ -172,7 +172,7 @@ public partial class Index : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        //await PruebaImagen2();
+        //await PruebaImagen1();
 
         if (BluetoothNavigator is null)
             return;
@@ -184,34 +184,77 @@ public partial class Index : IDisposable
     private async Task PruebaImagen1()
     {
         try
-        {
-            var _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(NavigationManager.BaseUri)
-            };
+        {            
+            var (bytes, ancho, alto) = await ObtenerDatosImagen();
 
-            var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
-            var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            byte[] bytes = memoryStream.ToArray();
+            var comandos = CapturaDatosImagen(bytes, ancho, alto);
+            var pixels = GetPixelValues(bytes, ancho);
 
-            byte[] imageMode = { 0x1B, 0x2A, 33 };
-            var ancho = (await ObtenerDimension()).Ancho;
-
-            var n1 = ancho % 256;
-            var n2 = Math.Floor((decimal)ancho / 256);
-
-            byte[][] matrix = Array.Empty<byte[]>();
-
-            foreach (var b in bytes.Chunk(24))
-            {
-
-            }
+            await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
+            await Characteristic.WriteValueWithoutResponse(pixels.ToArray());
         }
         catch (Exception e)
         {
             Logs.Add($"{DateTime.Now:HH:mm} - Error {e.Message}.");
         }
+    }
+
+    public static List<byte> GetPixelValues(byte[] imageData, int ancho)
+    {
+        var pixelValues = new List<byte>
+        {
+            0x1B,
+            0x2A,
+            0x21,
+            (byte)(ancho / 8),
+            (byte)(ancho / 8 >> 8)
+        };
+
+        foreach (byte pixel in imageData)
+        {
+            // Si el valor del byte es mayor que 128, consideramos que es un píxel negro (0xFF), de lo contrario, es blanco (0x00)
+            byte pixelValue = pixel > 128 ? (byte)0xFF : (byte)0x00;
+            pixelValues.Add(pixelValue);
+        }
+
+        pixelValues.Add(0x0A);
+
+        return pixelValues;
+    }
+
+    private List<byte> CapturaDatosImagen(byte[] bytes, int ancho, int alto) 
+    {
+        var commands = new List<byte>
+        {
+            0x1B,
+            0x2A,
+            0x21,
+            (byte)(ancho / 8),
+            (byte)(ancho / 8 >> 8)
+        };
+
+        for (int i = 0; i < alto; i++)
+        {
+            for (int j = 0; j < ancho / 8; j++)
+            {
+                byte data = 0x00;
+                for (int k = 0; k < 8; k++)
+                {
+                    int x = j * 8 + k;
+                    int y = i;
+                    int pixelIndex = y * ancho + x;
+                    if (pixelIndex < bytes.Length && bytes[pixelIndex] == 0xFF)
+                    {
+                        data |= (byte)(0x80 >> k);
+                    }
+                }
+                commands.Add(data);
+            }
+        }
+
+        commands.Add(0x0A);
+
+        return commands;
     }
 
     private async Task PruebaImagen2()
@@ -228,7 +271,7 @@ public partial class Index : IDisposable
             await stream.CopyToAsync(memoryStream);
             byte[] bytes = memoryStream.ToArray();
 
-            var dimension = await ObtenerDimension();
+            var dimension = await ObtenerDatosImagen();
 
             var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
             await Characteristic.WriteValueWithoutResponse(data);
@@ -592,7 +635,7 @@ public partial class Index : IDisposable
 
             var data = Encoding.UTF8.GetBytes(jsonString);
 
-            var ancho = (await ObtenerDimension()).Ancho;
+            var ancho = (await ObtenerDatosImagen()).Ancho;
 
             var n1 = BitConverter.GetBytes(ancho % 256);
             var n2 = BitConverter.GetBytes((int)Math.Floor((decimal)ancho / 256));
@@ -613,8 +656,18 @@ public partial class Index : IDisposable
     }
 
     [JSInvokable]
-    public async Task<(int Ancho, int Alto)> ObtenerDimension()
+    public async Task<(byte[]Bytes, int Ancho, int Alto)> ObtenerDatosImagen()
     {
+        var _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(NavigationManager.BaseUri)
+        };
+
+        var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
+        var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        byte[] bytes = memoryStream.ToArray();
+
         var imageUrl = $"{NavigationManager.BaseUri}img/prueba.png";
         var dimensiones = await JS.InvokeAsync<int[]>("ObtenerDimensionesImagen", imageUrl);
 
@@ -627,7 +680,7 @@ public partial class Index : IDisposable
             alto = Convert.ToInt32(dimensiones[1]);
         }
 
-        return (ancho, alto);
+        return (bytes, ancho, alto);
     }
 
     private async Task Enviar()
