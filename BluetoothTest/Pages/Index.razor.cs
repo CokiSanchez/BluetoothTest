@@ -186,13 +186,18 @@ public partial class Index : IDisposable
     private async Task PruebaImagen1()
     {
         try
-        {            
+        {
             var (bytes, ancho, alto) = await ObtenerDatosImagen(Nombre);
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             var pixels = GetPixelValues(bytes, ancho);
 
-            await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
+            foreach (var chunk in comandos.ToArray().Chunk(bytes.Length / 24))
+                await Characteristic.WriteValueWithoutResponse(chunk);
+
+            await Characteristic.WriteValueWithResponse(new byte[] { 0x0A });
+
+            //await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
             //await Characteristic.WriteValueWithoutResponse(pixels.ToArray());
         }
         catch (Exception e)
@@ -224,7 +229,7 @@ public partial class Index : IDisposable
         return pixelValues;
     }
 
-    private List<byte> CapturaDatosImagen(byte[] bytes, int ancho, int alto) 
+    private List<byte> CapturaDatosImagen(byte[] bytes, int ancho, int alto)
     {
         var commands = new List<byte>
         {
@@ -254,7 +259,7 @@ public partial class Index : IDisposable
             }
         }
 
-        commands.Add(0x0A);
+        //commands.Add(0x0A);
 
         return commands;
     }
@@ -455,7 +460,7 @@ public partial class Index : IDisposable
         commands.Add((byte)0x00);
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
-        
+
         commands.Add((byte)0xFF);
         commands.Add((byte)0xFF);
         commands.Add((byte)0x00);
@@ -658,7 +663,7 @@ public partial class Index : IDisposable
     }
 
     [JSInvokable]
-    public async Task<(byte[]Bytes, int Ancho, int Alto)> ObtenerDatosImagen(string nombre)
+    public async Task<(byte[] Bytes, int Ancho, int Alto)> ObtenerDatosImagen(string nombre)
     {
         var _httpClient = new HttpClient
         {
