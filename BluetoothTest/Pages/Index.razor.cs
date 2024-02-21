@@ -182,6 +182,8 @@ public partial class Index : IDisposable
     }
 
     private const string Nombre = "prueba.png";
+    private readonly byte[] Init_Image_Mode = { 0x1B, 0x2A, 0x21, 0x01, 0x00 };
+    private readonly byte[] New_Line = { 0x0A };
 
     private async Task PruebaImagen1()
     {
@@ -190,37 +192,16 @@ public partial class Index : IDisposable
             var (bytes, ancho, alto) = await ObtenerDatosImagen(Nombre);
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
-            //var pixels = GetPixelValues(bytes, ancho);
 
-            //var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(ancho % 256), (byte)Math.Floor((decimal)ancho / 256) };
-            //var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(2 % 256), (byte)Math.Floor((decimal)2 / 256) };
+            //var b = new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
 
-            //await Characteristic.WriteValueWithoutResponse(init);
-
-            var b = new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
-
-            foreach (var chunk in b.Chunk(3))
+            foreach (var chunk in bytes.Chunk(3))
             {
-                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
-                await Characteristic.WriteValueWithoutResponse(init);
+                await Characteristic.WriteValueWithoutResponse(Init_Image_Mode);
                 await Characteristic.WriteValueWithoutResponse(chunk);
-            }
+            }        
 
-            foreach (var chunk in b.Chunk(3))
-            {
-                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
-                await Characteristic.WriteValueWithoutResponse(init);
-                await Characteristic.WriteValueWithoutResponse(chunk);
-            }
-
-            foreach (var chunk in b.Chunk(3))
-            {
-                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
-                await Characteristic.WriteValueWithoutResponse(init);
-                await Characteristic.WriteValueWithoutResponse(chunk);
-            }
-
-            await Characteristic.WriteValueWithoutResponse(new byte[] { 0x0A });
+            await Characteristic.WriteValueWithoutResponse(New_Line);
 
             //await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
             //await Characteristic.WriteValueWithoutResponse(pixels.ToArray());
