@@ -233,14 +233,7 @@ public partial class Index : IDisposable
 
     private List<byte> CapturaDatosImagen(byte[] bytes, int ancho, int alto)
     {
-        var commands = new List<byte>
-        {
-            0x1B,
-            0x2A,
-            0x21,
-            (byte)(ancho / 8),
-            (byte)(ancho / 8 >> 8)
-        };
+        var commands = new List<byte>();
 
         for (int i = 0; i < alto; i++)
         {
@@ -260,8 +253,6 @@ public partial class Index : IDisposable
                 commands.Add(data);
             }
         }
-
-        //commands.Add(0x0A);
 
         return commands;
     }
