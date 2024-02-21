@@ -2,6 +2,7 @@
 using BluetoothTest.Shared.BluetoothService.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
 using System.Text;
 using System.Text.Json;
 
@@ -195,11 +196,12 @@ public partial class Index : IDisposable
 
             //var b = new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
 
-            foreach (var chunk in bytes.Chunk(3))
+            foreach (var (chunk, index) in bytes.Chunk(3).Select((chunk, index) => (chunk, index)))
             {
                 await Characteristic.WriteValueWithoutResponse(Init_Image_Mode);
                 await Characteristic.WriteValueWithoutResponse(chunk);
-            }        
+                Logs.Add($"{DateTime.Now:HH:mm} - [{index + 1}/{bytes.Length}] Se envia a imprimir {chunk.Length} de tamaño");
+            }
 
             await Characteristic.WriteValueWithoutResponse(New_Line);
 
