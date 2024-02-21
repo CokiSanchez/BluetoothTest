@@ -181,11 +181,13 @@ public partial class Index : IDisposable
         await BuscarServicio();
     }
 
+    private const string Nombre = "cat.png";
+
     private async Task PruebaImagen1()
     {
         try
         {            
-            var (bytes, ancho, alto) = await ObtenerDatosImagen();
+            var (bytes, ancho, alto) = await ObtenerDatosImagen(Nombre);
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             var pixels = GetPixelValues(bytes, ancho);
@@ -266,12 +268,12 @@ public partial class Index : IDisposable
                 BaseAddress = new Uri(NavigationManager.BaseUri)
             };
 
-            var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
+            var stream = await _httpClient.GetStreamAsync($"/img/{Nombre}");
             var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             byte[] bytes = memoryStream.ToArray();
 
-            var dimension = await ObtenerDatosImagen();
+            var dimension = await ObtenerDatosImagen(Nombre);
 
             var data = GenerateImageCommands(bytes, dimension.Ancho, dimension.Alto);
             await Characteristic.WriteValueWithoutResponse(data);
@@ -628,14 +630,14 @@ public partial class Index : IDisposable
     {
         try
         {
-            var imageUrl = $"{NavigationManager.BaseUri}img/prueba.png";
+            var imageUrl = $"{NavigationManager.BaseUri}img/{Nombre}";
             var escPosData = await JS.InvokeAsync<object[]>("convertImageToESCPOS", imageUrl);
 
             var jsonString = JsonSerializer.Serialize(escPosData);
 
             var data = Encoding.UTF8.GetBytes(jsonString);
 
-            var ancho = (await ObtenerDatosImagen()).Ancho;
+            var ancho = (await ObtenerDatosImagen(Nombre)).Ancho;
 
             var n1 = BitConverter.GetBytes(ancho % 256);
             var n2 = BitConverter.GetBytes((int)Math.Floor((decimal)ancho / 256));
@@ -656,19 +658,19 @@ public partial class Index : IDisposable
     }
 
     [JSInvokable]
-    public async Task<(byte[]Bytes, int Ancho, int Alto)> ObtenerDatosImagen()
+    public async Task<(byte[]Bytes, int Ancho, int Alto)> ObtenerDatosImagen(string nombre)
     {
         var _httpClient = new HttpClient
         {
             BaseAddress = new Uri(NavigationManager.BaseUri)
         };
 
-        var stream = await _httpClient.GetStreamAsync($"/img/prueba.png");
+        var stream = await _httpClient.GetStreamAsync($"/img/{nombre}");
         var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
         byte[] bytes = memoryStream.ToArray();
 
-        var imageUrl = $"{NavigationManager.BaseUri}img/prueba.png";
+        var imageUrl = $"{NavigationManager.BaseUri}img/{nombre}";
         var dimensiones = await JS.InvokeAsync<int[]>("ObtenerDimensionesImagen", imageUrl);
 
         var ancho = 0;
