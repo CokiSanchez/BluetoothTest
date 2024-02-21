@@ -191,13 +191,16 @@ public partial class Index : IDisposable
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             //var pixels = GetPixelValues(bytes, ancho);
-           
-            foreach (var chunk in bytes.Chunk(alto))
+
+            //var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(ancho % 256), (byte)Math.Floor((decimal)ancho / 256) };
+            var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(2 % 256), (byte)Math.Floor((decimal)2 / 256) };
+
+            //await Characteristic.WriteValueWithoutResponse(init);
+
+            var b = new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+
+            foreach (var chunk in b.Chunk(3))
             {
-                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
-
-                await Characteristic.WriteValueWithoutResponse(init);
-
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
 
