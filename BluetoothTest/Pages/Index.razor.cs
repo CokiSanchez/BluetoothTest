@@ -206,6 +206,20 @@ public partial class Index : IDisposable
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
 
+            foreach (var chunk in b.Chunk(3))
+            {
+                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
+                await Characteristic.WriteValueWithoutResponse(init);
+                await Characteristic.WriteValueWithoutResponse(chunk);
+            }
+
+            foreach (var chunk in b.Chunk(3))
+            {
+                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
+                await Characteristic.WriteValueWithoutResponse(init);
+                await Characteristic.WriteValueWithoutResponse(chunk);
+            }
+
             await Characteristic.WriteValueWithoutResponse(new byte[] { 0x0A });
 
             //await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
