@@ -197,9 +197,9 @@ public partial class Index : IDisposable
 
             //await Characteristic.WriteValueWithoutResponse(init);
 
-            var b = new byte[] { 0x1B, 0x2A, 0x21, 0x02, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+            var b = new byte[] { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
 
-            foreach (var chunk in b.Chunk(3))
+            foreach (var chunk in bytes.Chunk(3))
             {
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
