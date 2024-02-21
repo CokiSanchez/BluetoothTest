@@ -181,7 +181,7 @@ public partial class Index : IDisposable
         await BuscarServicio();
     }
 
-    private const string Nombre = "cat.png";
+    private const string Nombre = "prueba.png";
 
     private async Task PruebaImagen1()
     {
@@ -191,12 +191,15 @@ public partial class Index : IDisposable
 
             var comandos = CapturaDatosImagen(bytes, ancho, alto);
             //var pixels = GetPixelValues(bytes, ancho);
-            var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(ancho % 256), (byte)Math.Floor((decimal)ancho / 256) };
-
-            await Characteristic.WriteValueWithoutResponse(init);
-
+           
             foreach (var chunk in bytes.Chunk(alto))
+            {
+                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
+
+                await Characteristic.WriteValueWithoutResponse(init);
+
                 await Characteristic.WriteValueWithoutResponse(chunk);
+            }
 
             await Characteristic.WriteValueWithoutResponse(new byte[] { 0x0A });
 
