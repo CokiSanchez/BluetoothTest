@@ -195,7 +195,7 @@ public partial class Index : IDisposable
             foreach (var chunk in comandos.ToArray().Chunk(bytes.Length / 24))
                 await Characteristic.WriteValueWithoutResponse(chunk);
 
-            await Characteristic.WriteValueWithResponse(new byte[] { 0x0A });
+            await Characteristic.WriteValueWithoutResponse(new byte[] { 0x0A });
 
             //await Characteristic.WriteValueWithoutResponse(comandos.ToArray());
             //await Characteristic.WriteValueWithoutResponse(pixels.ToArray());
