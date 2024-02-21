@@ -201,7 +201,7 @@ public partial class Index : IDisposable
 
             foreach (var chunk in b.Chunk(3))
             {
-                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(2 % 256), (byte)Math.Floor((decimal)2 / 256) };
+                var init = new byte[] { 0x1B, 0x2A, 0x21, (byte)(1 % 256), (byte)Math.Floor((decimal)1 / 256) };
                 await Characteristic.WriteValueWithoutResponse(init);
                 await Characteristic.WriteValueWithoutResponse(chunk);
             }
