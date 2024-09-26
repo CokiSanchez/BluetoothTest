@@ -57,8 +57,7 @@ public partial class Index : IDisposable
                 {
                     new()
                     {
-                        Name = "RPP320-3016-B",
-                        NamePrefix = null,
+                        NamePrefix = "RPP320",
                     }
                 },
                 OptionalServices = new()
