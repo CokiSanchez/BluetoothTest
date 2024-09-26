@@ -1,8 +1,14 @@
-﻿using BluetoothTest.Shared.BluetoothService.Interfaces;
-using BluetoothTest.Shared.BluetoothService.Models;
+﻿//using BluetoothTest.Shared.BluetoothService.Interfaces;
+//using BluetoothTest.Shared.BluetoothService.Models;
+//using Microsoft.AspNetCore.Components;
+//using Microsoft.JSInterop;
+//using System;
+//using System.Text;
+//using System.Text.Json;
+
+using Blazor.Bluetooth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
 using System.Text;
 using System.Text.Json;
 
@@ -50,8 +56,8 @@ public partial class Index : IDisposable
 
         try
         {
-            var query = new RequestDeviceQuery
-            {
+            var options = new RequestDeviceOptions 
+            { 
                 AcceptAllDevices = false,
                 Filters = new List<Filter>
                 {
@@ -63,14 +69,31 @@ public partial class Index : IDisposable
                 OptionalServices = new()
             };
 
-            query.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
-            query.OptionalServices.Add("0000180a-0000-1000-8000-00805f9b34fb");
-            query.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
-            query.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
+
+            //var query = new RequestDeviceQuery
+            //{
+            //    AcceptAllDevices = false,
+            //    Filters = new List<Filter>
+            //    {
+            //        new()
+            //        {
+            //            NamePrefix = "RPP320",
+            //        }
+            //    },
+            //    OptionalServices = new()
+            //};
+
+            options.OptionalServices.Add("00001800-0000-1000-8000-00805f9b34fb");
+            options.OptionalServices.Add("0000180a-0000-1000-8000-00805f9b34fb");
+            options.OptionalServices.Add("000018f0-0000-1000-8000-00805f9b34fb");
+            options.OptionalServices.Add("0000ffe0-0000-1000-8000-00805f9b34fb");
+
+            Device = await BluetoothNavigator.RequestDevice(options);
+
 
             Logs.Add($"{DateTime.Now:HH:mm} - Buscando...");
 
-            Device = await BluetoothNavigator.RequestDevice(query);
+            //Device = await BluetoothNavigator.RequestDevice(query);
 
             if (Device is not null)
                 Logs.Clear();
