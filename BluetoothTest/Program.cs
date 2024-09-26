@@ -1,3 +1,4 @@
+using Blazor.Bluetooth;
 using BluetoothTest;
 using BluetoothTest.Shared.BluetoothService.Extensions;
 using Microsoft.AspNetCore.Components.Web;
